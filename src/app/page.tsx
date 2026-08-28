@@ -223,7 +223,7 @@ export default function HomePage() {
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-800">
                   <span className="text-slate-400">Score de Oportunidade:</span>
-                  <span className="font-extrabold text-cyan-400">{selectedComarca.score_oportunidade} / 10.0</span>
+                  <span className="font-extrabold text-cyan-400">{selectedComarca.score_oportunidade} / 100</span>
                 </div>
                 <div className="flex justify-between py-1">
                   <span className="text-slate-400">Modo de Matching Ativado:</span>

@@ -67,9 +67,9 @@ export default function RadarComarcasPage() {
             <span className="text-xs font-bold text-slate-400 uppercase">Maior Score de Oportunidade</span>
             <TrendingUp className="w-5 h-5 text-cyan-400" />
           </div>
-          <p className="text-3xl font-extrabold text-cyan-300">9.8 / 10.0</p>
+          <p className="text-3xl font-extrabold text-cyan-300">92.47 / 100</p>
           <p className="text-xs text-slate-400 mt-1">
-            Comarca de Reserva/PR • 26.800 hab. para apenas 2 advogados atuantes.
+            Comarca de Goioerê/PR • 1.060 nomeações para 365 advogados cadastrados (Alta Carência).
           </p>
         </div>
 
@@ -191,13 +191,13 @@ export default function RadarComarcasPage() {
                   {/* Score de Oportunidade Bar */}
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-2">
-                      <span className={`font-extrabold text-sm ${comarca.score_oportunidade >= 7.5 ? 'text-amber-400' : 'text-cyan-400'}`}>
+                      <span className={`font-extrabold text-sm ${comarca.score_oportunidade >= 85.0 ? 'text-amber-400' : 'text-cyan-400'}`}>
                         {comarca.score_oportunidade}
                       </span>
                       <div className="w-20 bg-slate-800 h-2 rounded-full overflow-hidden">
                         <div 
-                          className={`h-full ${comarca.score_oportunidade >= 7.5 ? 'bg-amber-500' : 'bg-cyan-400'}`}
-                          style={{ width: `${(comarca.score_oportunidade / 10) * 100}%` }}
+                          className={`h-full ${comarca.score_oportunidade >= 85.0 ? 'bg-amber-500' : 'bg-cyan-400'}`}
+                          style={{ width: `${comarca.score_oportunidade}%` }}
                         ></div>
                       </div>
                     </div>

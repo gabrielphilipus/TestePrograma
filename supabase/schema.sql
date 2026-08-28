@@ -65,8 +65,8 @@ CREATE TABLE IF NOT EXISTS public.comarcas (
     populacao INTEGER DEFAULT 0,
     num_advogados_ativos INTEGER DEFAULT 0,
     total_processos_ano INTEGER DEFAULT 0,
-    score_oportunidade NUMERIC(4, 2) DEFAULT 5.00, -- 0.00 a 10.00 (alto = deserto/alta carência)
-    is_deserto_juridico BOOLEAN GENERATED ALWAYS AS (num_advogados_ativos <= 3 OR score_oportunidade >= 7.50) STORED,
+    score_oportunidade NUMERIC(5, 2) DEFAULT 50.00, -- 0.00 a 100.00 (alto = deserto/alta carência)
+    is_deserto_juridico BOOLEAN GENERATED ALWAYS AS (num_advogados_ativos <= 25 OR score_oportunidade >= 85.00) STORED,
     latitude NUMERIC(10, 6) NOT NULL,
     longitude NUMERIC(10, 6) NOT NULL,
     raio_atendimento_sugerido_km INTEGER DEFAULT 50,

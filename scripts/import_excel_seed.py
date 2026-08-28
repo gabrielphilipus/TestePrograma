@@ -34,7 +34,7 @@ print(f"Comarcas válidas: {len(df_com)}")
 sql_lines = [
     "-- ==============================================================================",
     "-- MATCH JURÍDICO - SCRIPT DE SEED REAL (FONTE: OAB/PR 2026 - 163 COMARCAS)",
-    "-- Dados reais de nomeações de defensores dativos por comarca e especialidade",
+    "-- Dados reais de nomeações e Score de Oportunidade na escala 0 a 100",
     "-- ==============================================================================",
     "",
     "-- 1. Inserir Especialidades Reais",
@@ -68,7 +68,7 @@ for idx, row in df_esp.iterrows():
         f"ON CONFLICT (nome) DO UPDATE SET slug = EXCLUDED.slug;"
     )
 
-sql_lines.append("\n-- 2. Inserir Comarcas Reais com Métricas da OAB/PR")
+sql_lines.append("\n-- 2. Inserir Comarcas Reais com Métricas da OAB/PR (Escala 0-100)")
 
 coords = {
     'MARINGÁ': (-23.4205, -51.9331),
@@ -100,8 +100,9 @@ for idx, (_, row) in enumerate(df_com.iterrows()):
     nomeacoes = int(float(row['Nomeacoes']))
     oabs = int(float(row['OABs_distintos'])) if pd.notnull(row['OABs_distintos']) else 1
     score_op = float(row['Score_oportunidade']) if pd.notnull(row['Score_oportunidade']) else 50.0
-    score_normalizado = round(score_op / 10.0, 2)
-    is_deserto = oabs <= 25 or score_normalizado >= 8.5
+    # Manter escala exata 0.00 a 100.00
+    score_exato = round(score_op, 2)
+    is_deserto = oabs <= 25 or score_exato >= 85.0
     
     lat, lng = coords.get(nome, (-24.5000 + ((idx * 7) % 300) * 0.01, -51.5000 + ((idx * 11) % 300) * 0.01))
     lat = round(lat, 6)
@@ -111,7 +112,7 @@ for idx, (_, row) in enumerate(df_com.iterrows()):
     
     sql_lines.append(
         f"INSERT INTO public.comarcas (id, nome, uf, regiao, populacao, num_advogados_ativos, total_processos_ano, score_oportunidade, latitude, longitude, raio_atendimento_sugerido_km) "
-        f"VALUES ('{com_id}', '{nome.title()}', 'PR', 'Paraná', {nomeacoes * 25 + 5000}, {oabs}, {nomeacoes}, {score_normalizado}, {lat}, {lng}, {60 if is_deserto else 30}) "
+        f"VALUES ('{com_id}', '{nome.title()}', 'PR', 'Paraná', {nomeacoes * 25 + 5000}, {oabs}, {nomeacoes}, {score_exato}, {lat}, {lng}, {60 if is_deserto else 30}) "
         f"ON CONFLICT (id) DO NOTHING;"
     )
 
@@ -123,12 +124,15 @@ for idx, (_, row) in enumerate(df_com.iterrows()):
         'populacao': int(nomeacoes * 25 + 5000),
         'num_advogados_ativos': oabs,
         'total_processos_ano': nomeacoes,
-        'score_oportunidade': score_normalizado,
+        'score_oportunidade': score_exato,
         'is_deserto_juridico': is_deserto,
         'latitude': lat,
         'longitude': lng,
         'raio_atendimento_sugerido_km': 60 if is_deserto else 30
     })
+
+# Ordenar mock_comarcas_ts por score_oportunidade decrescente (ex: Goioerê 92.47, Ponta Grossa 90.29)
+mock_comarcas_ts.sort(key=lambda c: c['score_oportunidade'], reverse=True)
 
 with open('supabase/seed.sql', 'w', encoding='utf-8') as f:
     f.write('\n'.join(sql_lines))
@@ -136,4 +140,4 @@ with open('supabase/seed.sql', 'w', encoding='utf-8') as f:
 with open('scripts/extracted_data.json', 'w', encoding='utf-8') as f:
     json.dump({'comarcas': mock_comarcas_ts, 'especialidades': especialidades_list}, f, ensure_ascii=False, indent=2)
 
-print(f"Sucesso! {len(mock_comarcas_ts)} comarcas reais e {len(especialidades_list)} especialidades exportadas para seed.")
+print("Seed e JSON atualizados com escala 0-100 exata da planilha!")
