@@ -111,10 +111,10 @@ export const COMARCAS_DATA: Comarca[] = [
     "num_advogados_ativos": 365,
     "total_processos_ano": 1060,
     "score_oportunidade": 92.47,
-    "is_deserto_juridico": true,
+    "is_deserto_juridico": false,
     "latitude": -24.1847,
     "longitude": -53.0278,
-    "raio_atendimento_sugerido_km": 60
+    "raio_atendimento_sugerido_km": 30
   },
   {
     "id": "com-ponta-grossa",
@@ -125,10 +125,10 @@ export const COMARCAS_DATA: Comarca[] = [
     "num_advogados_ativos": 1006,
     "total_processos_ano": 1839,
     "score_oportunidade": 90.29,
-    "is_deserto_juridico": true,
+    "is_deserto_juridico": false,
     "latitude": -25.0994,
     "longitude": -50.1583,
-    "raio_atendimento_sugerido_km": 60
+    "raio_atendimento_sugerido_km": 30
   },
   {
     "id": "com-campo-largo",
@@ -139,10 +139,10 @@ export const COMARCAS_DATA: Comarca[] = [
     "num_advogados_ativos": 1028,
     "total_processos_ano": 1755,
     "score_oportunidade": 89.8,
-    "is_deserto_juridico": true,
+    "is_deserto_juridico": false,
     "latitude": -25.4597,
     "longitude": -49.5275,
-    "raio_atendimento_sugerido_km": 60
+    "raio_atendimento_sugerido_km": 30
   },
   {
     "id": "com-tel-maco-borba",
@@ -153,10 +153,10 @@ export const COMARCAS_DATA: Comarca[] = [
     "num_advogados_ativos": 395,
     "total_processos_ano": 942,
     "score_oportunidade": 89.64,
-    "is_deserto_juridico": true,
+    "is_deserto_juridico": false,
     "latitude": -24.3239,
     "longitude": -50.6156,
-    "raio_atendimento_sugerido_km": 60
+    "raio_atendimento_sugerido_km": 30
   },
   {
     "id": "com-palmas",
@@ -167,10 +167,10 @@ export const COMARCAS_DATA: Comarca[] = [
     "num_advogados_ativos": 369,
     "total_processos_ano": 778,
     "score_oportunidade": 87.53,
-    "is_deserto_juridico": true,
+    "is_deserto_juridico": false,
     "latitude": -22.96,
     "longitude": -49.08,
-    "raio_atendimento_sugerido_km": 60
+    "raio_atendimento_sugerido_km": 30
   },
   {
     "id": "com-fazenda-rio-grande",
@@ -181,10 +181,10 @@ export const COMARCAS_DATA: Comarca[] = [
     "num_advogados_ativos": 1118,
     "total_processos_ano": 1742,
     "score_oportunidade": 87.5,
-    "is_deserto_juridico": true,
+    "is_deserto_juridico": false,
     "latitude": -25.6592,
     "longitude": -49.3081,
-    "raio_atendimento_sugerido_km": 60
+    "raio_atendimento_sugerido_km": 30
   },
   {
     "id": "com-chopinzinho",
@@ -195,10 +195,10 @@ export const COMARCAS_DATA: Comarca[] = [
     "num_advogados_ativos": 231,
     "total_processos_ano": 686,
     "score_oportunidade": 86.08,
-    "is_deserto_juridico": true,
+    "is_deserto_juridico": false,
     "latitude": -22.75,
     "longitude": -48.75,
-    "raio_atendimento_sugerido_km": 60
+    "raio_atendimento_sugerido_km": 30
   },
   {
     "id": "com-bocai-va-do-sul",
@@ -209,10 +209,10 @@ export const COMARCAS_DATA: Comarca[] = [
     "num_advogados_ativos": 298,
     "total_processos_ano": 929,
     "score_oportunidade": 86.01,
-    "is_deserto_juridico": true,
+    "is_deserto_juridico": false,
     "latitude": -23.45,
     "longitude": -49.85,
-    "raio_atendimento_sugerido_km": 60
+    "raio_atendimento_sugerido_km": 30
   },
   {
     "id": "com-palotina",
@@ -223,10 +223,10 @@ export const COMARCAS_DATA: Comarca[] = [
     "num_advogados_ativos": 375,
     "total_processos_ano": 728,
     "score_oportunidade": 85.97,
-    "is_deserto_juridico": true,
+    "is_deserto_juridico": false,
     "latitude": -22.89,
     "longitude": -48.97,
-    "raio_atendimento_sugerido_km": 60
+    "raio_atendimento_sugerido_km": 30
   },
   {
     "id": "com-arapongas",
@@ -237,10 +237,10 @@ export const COMARCAS_DATA: Comarca[] = [
     "num_advogados_ativos": 838,
     "total_processos_ano": 1292,
     "score_oportunidade": 85.91,
-    "is_deserto_juridico": true,
+    "is_deserto_juridico": false,
     "latitude": -23.4189,
     "longitude": -51.4244,
-    "raio_atendimento_sugerido_km": 60
+    "raio_atendimento_sugerido_km": 30
   },
   {
     "id": "com-lapa",
@@ -251,10 +251,10 @@ export const COMARCAS_DATA: Comarca[] = [
     "num_advogados_ativos": 461,
     "total_processos_ano": 918,
     "score_oportunidade": 85.25,
-    "is_deserto_juridico": true,
+    "is_deserto_juridico": false,
     "latitude": -23.38,
     "longitude": -49.74,
-    "raio_atendimento_sugerido_km": 60
+    "raio_atendimento_sugerido_km": 30
   },
   {
     "id": "com-guarapuava",

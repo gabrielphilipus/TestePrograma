@@ -36,13 +36,13 @@ export default function RadarComarcasPage() {
       <div className="pb-8 border-b border-blue-900/30">
         <div className="flex items-center space-x-2 text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">
           <MapPin className="w-4 h-4" />
-          <span>Observatório de Acesso à Justiça</span>
+          <span>Observatório de Acesso à Justiça • Dados Reais OAB/PR</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-white">
           Radar de Comarcas & Desertos Jurídicos
         </h1>
         <p className="text-sm text-slate-300 max-w-3xl mt-2 leading-relaxed">
-          Dados reais sobre a distribuição de advogados dativos e carência de assistência judiciária. O Match Jurídico utiliza o <strong>Score de Oportunidade</strong> para acionar a expansão dinâmica de raio e remunerar/incentivar advogados a atuarem em regiões desatendidas.
+          Monitoramento inteligente com base em dois pilares complementares: o <strong>Score de Oportunidade (0–100)</strong> (para atração e alocação estratégica de advogados) e a detecção de <strong>Desertos Jurídicos</strong> (comarcas com escassez crítica absoluta de advogados no local, ativando a expansão de raio geodésico para garantir atendimento ao cidadão).
         </p>
       </div>
 
