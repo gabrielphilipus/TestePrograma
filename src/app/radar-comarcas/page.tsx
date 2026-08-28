@@ -51,14 +51,14 @@ export default function RadarComarcasPage() {
         
         <div className="glass-panel p-6 rounded-3xl border border-amber-500/30">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-slate-400 uppercase">Comarcas em Alerta</span>
+            <span className="text-xs font-bold text-slate-400 uppercase">Desertos Jurídicos</span>
             <AlertTriangle className="w-5 h-5 text-amber-400" />
           </div>
           <p className="text-3xl font-extrabold text-amber-300">
-            {COMARCAS_DATA.filter(c => c.is_deserto_juridico).length}
+            {COMARCAS_DATA.filter(c => c.is_deserto_juridico).length} Comarcas
           </p>
           <p className="text-xs text-slate-400 mt-1">
-            Comarcas com 3 ou menos advogados dativos inscritos (Desertos Jurídicos).
+            Comarcas com escassez crítica absoluta (≤ 25 advogados ativos locais).
           </p>
         </div>
 
@@ -69,18 +69,18 @@ export default function RadarComarcasPage() {
           </div>
           <p className="text-3xl font-extrabold text-cyan-300">92.47 / 100</p>
           <p className="text-xs text-slate-400 mt-1">
-            Comarca de Goioerê/PR • 1.060 nomeações para 365 advogados cadastrados (Alta Carência).
+            Comarca de Goioerê/PR • 1.060 nomeações para 365 advogados (Alta Demanda OAB/PR).
           </p>
         </div>
 
         <div className="glass-panel p-6 rounded-3xl border border-emerald-500/30">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-slate-400 uppercase">Algoritmo de Expansão</span>
+            <span className="text-xs font-bold text-slate-400 uppercase">Matching Geodésico</span>
             <Sparkles className="w-5 h-5 text-emerald-400" />
           </div>
-          <p className="text-3xl font-extrabold text-emerald-300">100% Automático</p>
+          <p className="text-3xl font-extrabold text-emerald-300">Raio Dinâmico</p>
           <p className="text-xs text-slate-400 mt-1">
-            Amplia o raio de 40 km até 250 km conforme a carência da comarca.
+            Prioriza comarca local (35 km) e expande até 120–250 km apenas em desertos reais.
           </p>
         </div>
 
