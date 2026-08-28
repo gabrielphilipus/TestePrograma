@@ -186,10 +186,10 @@ export default function ChatCasoPage() {
           </div>
 
           {/* Input de Envio de Mensagem */}
-          <form onSubmit={handleSendMessage} className="p-4 border-t border-slate-800 bg-navy-900/90 flex items-center space-x-2">
+          <form onSubmit={handleSendMessage} className="p-4 border-t border-slate-800 bg-[#071321]/95 flex items-center space-x-2">
             <button
               type="button"
-              className="p-2.5 rounded-xl bg-navy-850 hover:bg-navy-800 text-slate-400 hover:text-white border border-slate-800"
+              className="p-2.5 rounded-xl bg-[#0c2444] hover:bg-[#133560] text-slate-300 hover:text-white border border-blue-900/50 transition-colors"
               title="Anexar Comprovante ou Documento"
             >
               <Paperclip className="w-4 h-4" />
@@ -200,13 +200,14 @@ export default function ChatCasoPage() {
               value={texto}
               onChange={(e) => setTexto(e.target.value)}
               placeholder="Digite sua mensagem para o atendimento..."
-              className="flex-1 bg-navy-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-400"
+              className="flex-1 bg-[#09182d] text-white placeholder:text-slate-400 border border-blue-800/60 focus:border-cyan-400 focus:bg-[#061224] focus:ring-1 focus:ring-cyan-400 rounded-xl px-4 py-3 text-sm font-medium outline-none transition-all"
             />
 
             <button
               type="submit"
               disabled={!texto.trim()}
-              className="p-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-md disabled:opacity-50 transition-all"
+              className="p-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-lg shadow-cyan-500/20 disabled:opacity-40 transition-all flex items-center justify-center"
+              title="Enviar Mensagem"
             >
               <Send className="w-4 h-4" />
             </button>
