@@ -37,14 +37,24 @@ export function getStoredRequerimentos(): Requerimento[] {
   if (typeof window === 'undefined') return MOCK_REQUERIMENTOS;
   const stored = localStorage.getItem(STORAGE_KEYS.REQUERIMENTOS);
   if (!stored) {
-    localStorage.setItem(STORAGE_KEYS.REQUERIMENTOS, JSON.stringify(MOCK_REQUERIMENTOS));
-    return MOCK_REQUERIMENTOS;
+    return [];
   }
   try {
     return JSON.parse(stored);
   } catch {
-    return MOCK_REQUERIMENTOS;
+    return [];
   }
+}
+
+export function clearAllRequerimentos(): void {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(STORAGE_KEYS.REQUERIMENTOS);
+  // Limpar todas as mensagens
+  Object.keys(localStorage).forEach(key => {
+    if (key.startsWith(STORAGE_KEYS.MENSAGENS)) {
+      localStorage.removeItem(key);
+    }
+  });
 }
 
 export function saveRequerimento(req: Requerimento): void {

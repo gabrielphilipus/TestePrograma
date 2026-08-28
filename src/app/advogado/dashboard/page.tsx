@@ -18,10 +18,11 @@ import {
   Clock,
   Flame
 } from 'lucide-react';
-import { getStoredRequerimentos, saveRequerimento, getCurrentUserProfile } from '@/lib/storage/mock-store';
+import { getStoredRequerimentos, saveRequerimento, getCurrentUserProfile, clearAllRequerimentos } from '@/lib/storage/mock-store';
 import { MOCK_ADVOGADOS, COMARCAS_DATA, ESPECIALIDADES_DATA } from '@/lib/data/mock-seed-data';
 import { calculateHaversineDistanceKm } from '@/lib/matching/engine';
 import { Requerimento, AdvogadoDativo } from '@/types/database';
+import { Trash2 } from 'lucide-react';
 
 export default function AdvogadoDashboardPage() {
   const [requerimentos, setRequerimentos] = useState<Requerimento[]>([]);
@@ -33,6 +34,11 @@ export default function AdvogadoDashboardPage() {
   useEffect(() => {
     setRequerimentos(getStoredRequerimentos());
   }, []);
+
+  const handleClearAll = () => {
+    clearAllRequerimentos();
+    setRequerimentos([]);
+  };
 
   const handleAceitarCaso = (req: Requerimento) => {
     const updatedReq: Requerimento = {
@@ -86,8 +92,18 @@ export default function AdvogadoDashboardPage() {
           </div>
         </div>
 
-        {/* Métricas do Advogado */}
+        {/* Métricas do Advogado e Ações */}
         <div className="flex items-center space-x-3">
+          {requerimentos.length > 0 && (
+            <button
+              onClick={handleClearAll}
+              className="px-3.5 py-3 rounded-xl bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-800/40 text-xs font-semibold flex items-center space-x-1.5 transition-colors"
+              title="Limpar todos os casos e mensagens de teste"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Limpar Casos</span>
+            </button>
+          )}
           <div className="p-3 rounded-xl bg-navy-850 border border-slate-800 text-center">
             <span className="text-[10px] text-slate-400 uppercase font-semibold">Casos Ativos</span>
             <p className="text-base font-extrabold text-white">{meusCasosAceitos.length}</p>

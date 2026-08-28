@@ -15,8 +15,9 @@ import {
   ShieldCheck,
   AlertCircle
 } from 'lucide-react';
-import { getStoredRequerimentos, getCurrentUserProfile } from '@/lib/storage/mock-store';
+import { getStoredRequerimentos, getCurrentUserProfile, clearAllRequerimentos } from '@/lib/storage/mock-store';
 import { Requerimento, Profile } from '@/types/database';
+import { Trash2 } from 'lucide-react';
 
 export default function MeusCasosCidadaoPage() {
   const [requerimentos, setRequerimentos] = useState<Requerimento[]>([]);
@@ -26,6 +27,11 @@ export default function MeusCasosCidadaoPage() {
     setProfile(getCurrentUserProfile());
     setRequerimentos(getStoredRequerimentos());
   }, []);
+
+  const handleClearAll = () => {
+    clearAllRequerimentos();
+    setRequerimentos([]);
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
@@ -45,13 +51,26 @@ export default function MeusCasosCidadaoPage() {
           </p>
         </div>
 
-        <Link
-          href="/cidadao/novo-caso"
-          className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-xs shadow-lg flex items-center justify-center space-x-2 shrink-0"
-        >
-          <PlusCircle className="w-4 h-4" />
-          <span>Novo Requerimento</span>
-        </Link>
+        <div className="flex items-center space-x-3">
+          {requerimentos.length > 0 && (
+            <button
+              onClick={handleClearAll}
+              className="px-4 py-2.5 rounded-xl bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-800/40 text-xs font-semibold flex items-center space-x-1.5 transition-colors"
+              title="Limpar todos os casos e mensagens de teste"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Limpar Histórico</span>
+            </button>
+          )}
+
+          <Link
+            href="/cidadao/novo-caso"
+            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-xs shadow-lg flex items-center justify-center space-x-2 shrink-0"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>Novo Requerimento</span>
+          </Link>
+        </div>
       </div>
 
       {/* Lista de Requerimentos */}
