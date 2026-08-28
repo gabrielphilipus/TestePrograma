@@ -128,8 +128,14 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Botão GOV.BR Oficial / Simulado */}
+          {/* Botão GOV.BR Oficial / Simulado com aviso explícito */}
           <div className="mb-6">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Acesso Unificado:</span>
+              <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] font-bold border border-amber-500/30">
+                Protótipo / Homologação Mock
+              </span>
+            </div>
             <button
               onClick={handleGovBrLogin}
               disabled={isSimulatingGovBr}
@@ -137,11 +143,11 @@ export default function LoginPage() {
             >
               <ShieldCheck className="w-5 h-5 text-emerald-300" />
               <span>
-                {isSimulatingGovBr ? 'Autenticando no GOV.br...' : 'Entrar com GOV.br (Recomendado)'}
+                {isSimulatingGovBr ? 'Autenticando via Sandbox GOV.br...' : 'Entrar com GOV.br (Simulação)'}
               </span>
             </button>
-            <p className="text-[10px] text-center text-slate-400 mt-1.5">
-              Identificação rápida via conta Ouro/Prata do Cidadão ou Certificado OAB
+            <p className="text-[10px] text-center text-slate-400 mt-1.5 leading-tight">
+              ⚡ <em>Simulação de Login Único (OAuth 2.0 / Nível Ouro). Integração formal em fase de homologação governamental.</em>
             </p>
           </div>
 

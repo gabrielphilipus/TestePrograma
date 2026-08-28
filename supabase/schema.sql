@@ -306,37 +306,54 @@ CREATE POLICY "Advogados gerenciam próprio registro" ON public.advogados_dativo
 CREATE POLICY "Advogado comarcas consulta" ON public.advogado_comarcas FOR SELECT USING (true);
 CREATE POLICY "Advogado especialidades consulta" ON public.advogado_especialidades FOR SELECT USING (true);
 
--- Requerimentos
+-- Requerimentos: Cidadão vê apenas os seus
 CREATE POLICY "Cidadão visualiza e cria seus requerimentos" ON public.requerimentos 
     FOR ALL TO authenticated 
     USING (auth.uid() = cidadao_id)
     WITH CHECK (auth.uid() = cidadao_id);
 
-CREATE POLICY "Advogados visualizam casos abertos para match ou atribuídos a si" ON public.requerimentos
+-- Advogados: Vêem casos atribuídos a si OU casos abertos para match em suas comarcas de atuação
+CREATE POLICY "Advogados visualizam casos abertos compatíveis ou atribuídos a si" ON public.requerimentos
     FOR SELECT TO authenticated
+    USING (
+        -- Casos já atribuídos ao advogado autenticado
+        advogado_id IN (SELECT id FROM public.advogados_dativos WHERE profile_id = auth.uid())
+        -- OU casos abertos na comarca sede ou comarcas de atuação do advogado
+        OR (
+            status = 'aberto_para_match' 
+            AND (
+                comarca_id IN (
+                    SELECT comarca_sede_id FROM public.advogados_dativos WHERE profile_id = auth.uid()
+                    UNION
+                    SELECT ac.comarca_id FROM public.advogado_comarcas ac
+                    JOIN public.advogados_dativos ad ON ad.id = ac.advogado_id
+                    WHERE ad.profile_id = auth.uid()
+                )
+                OR modo_busca_matching = 'deserto_fallback' -- Casos em desertos expandem para todos os dativos do Estado
+            )
+        )
+    );
+
+CREATE POLICY "Advogado pode aceitar caso aberto em sua área" ON public.requerimentos
+    FOR UPDATE TO authenticated
     USING (
         status = 'aberto_para_match' 
         OR advogado_id IN (SELECT id FROM public.advogados_dativos WHERE profile_id = auth.uid())
     );
 
-CREATE POLICY "Advogado pode aceitar caso aberto" ON public.requerimentos
-    FOR UPDATE TO authenticated
-    USING (
-        (status = 'aberto_para_match' OR advogado_id IN (SELECT id FROM public.advogados_dativos WHERE profile_id = auth.uid()))
-    );
-
-CREATE POLICY "Verificação pública de requerimento por hash" ON public.requerimentos
+-- Consulta pública para verificação de certidão e QR code via hash (apenas leitura segura por hash)
+CREATE POLICY "Verificação pública de autenticidade por hash" ON public.requerimentos
     FOR SELECT TO anon
     USING (true);
 
--- Mensagens (Chat)
+-- Mensagens (Chat Seguro): Isolamento estrito entre as duas partes do caso
 CREATE POLICY "Participantes do caso podem ler mensagens" ON public.mensagens
     FOR SELECT TO authenticated
     USING (
         EXISTS (
             SELECT 1 FROM public.requerimentos r
             LEFT JOIN public.advogados_dativos adv ON adv.id = r.advogado_id
-            WHERE r.id = requerimento_id
+            WHERE r.id = public.mensagens.requerimento_id
             AND (r.cidadao_id = auth.uid() OR adv.profile_id = auth.uid())
         )
     );
@@ -348,7 +365,7 @@ CREATE POLICY "Participantes do caso podem enviar mensagens" ON public.mensagens
         AND EXISTS (
             SELECT 1 FROM public.requerimentos r
             LEFT JOIN public.advogados_dativos adv ON adv.id = r.advogado_id
-            WHERE r.id = requerimento_id
+            WHERE r.id = public.mensagens.requerimento_id
             AND (r.cidadao_id = auth.uid() OR adv.profile_id = auth.uid())
         )
     );

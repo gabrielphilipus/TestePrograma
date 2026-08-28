@@ -22,17 +22,55 @@ export interface GeneratedPetitionOutput {
   pedidosFinais: string[];
   competenciaVaraSugerida: string;
   grauVulnerabilidade: 'Baixa' | 'Media' | 'Alta' | 'Extrema';
+  provedorIa?: string;
 }
 
 /**
- * Classificador e Estruturador de Petições e Requerimentos de Assistência Dativa
+ * Classificador e Estruturador de Petições de Assistência Dativa
+ * Tenta chamada de API real (Anthropic / OpenAI) via endpoint seguro e utiliza fallback estruturado caso necessário.
  */
 export async function generateStructuredPetition(
   input: GeneratePetitionInput
 ): Promise<GeneratedPetitionOutput> {
+  // 1. Tentar chamada à API server-side
+  try {
+    const res = await fetch('/api/ai/gerar-peticao', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data.source && data.source.includes('anthropic') || data.source.includes('openai')) {
+        const foundEsp = ESPECIALIDADES_DATA.find(
+          e => e.slug === data.especialidade_slug || e.id === data.especialidade_slug
+        ) || ESPECIALIDADES_DATA[0];
+
+        return {
+          especialidade: foundEsp,
+          tituloCaso: data.titulo_caso || 'Requerimento de Assistência Dativa',
+          resumoFatos: data.resumo_fatos || input.descricaoLivre,
+          requerimentoEstruturadoMd: data.requerimento_estruturado_md || data.requerimentoEstruturadoMd,
+          fundamentacaoJuridica: data.fundamentacao_juridica || 'Art. 5º, LXXIV da CF/88',
+          pedidosFinais: data.pedidos_finais || ['Justiça Gratuita', 'Nomeação de Defensor Dativo'],
+          competenciaVaraSugerida: data.competencia_vara || `Vara da Comarca de ${input.comarcaNome}/${input.uf}`,
+          grauVulnerabilidade: 'Alta',
+          provedorIa: data.source,
+        };
+      }
+    }
+  } catch (err) {
+    console.warn('Utilizando motor estruturado local para geração de petição:', err);
+  }
+
+  // 2. Motor Processual Local de Alta Fidelidade (Fallback Seguro)
+  return generateDeterministicPetition(input);
+}
+
+function generateDeterministicPetition(input: GeneratePetitionInput): GeneratedPetitionOutput {
   const textoMinusculo = input.descricaoLivre.toLowerCase();
 
-  // 1. Identificar Especialidade por Processamento de Linguagem Natural
   let especialidade = ESPECIALIDADES_DATA.find(e => e.id === input.especialidadeSugeridaId);
 
   if (!especialidade) {
@@ -40,7 +78,7 @@ export async function generateStructuredPetition(
       especialidade = ESPECIALIDADES_DATA.find(e => e.id === 'esp-familia')!;
     } else if (textoMinusculo.includes('inss') || textoMinusculo.includes('aposentadoria') || textoMinusculo.includes('auxílio-doença') || textoMinusculo.includes('bpc') || textoMinusculo.includes('loas') || textoMinusculo.includes('incapacidade')) {
       especialidade = ESPECIALIDADES_DATA.find(e => e.id === 'esp-previdenciario')!;
-    } else if (textoMinusculo.includes('preso') || textoMinusculo.includes('delegacia') || textoMinusculo.includes('crime') || textoMinusculo.includes('polícia') || textoMinusculo.includes('audiência de custódia')) {
+    } else if (textoMinusculo.includes('preso') || textoMinusculo.includes('delegacia') || textoMinusculo.includes('crime') || textoMinusculo.includes('polícia') || textoMinusculo.includes('audiência de custódia') || textoMinusculo.includes('acusado')) {
       especialidade = ESPECIALIDADES_DATA.find(e => e.id === 'esp-criminal')!;
     } else if (textoMinusculo.includes('remédio') || textoMinusculo.includes('sus') || textoMinusculo.includes('hospital') || textoMinusculo.includes('uti') || textoMinusculo.includes('prefeitura') || textoMinusculo.includes('estado')) {
       especialidade = ESPECIALIDADES_DATA.find(e => e.id === 'esp-fazenda')!;
@@ -51,7 +89,6 @@ export async function generateStructuredPetition(
     }
   }
 
-  // 2. Classificar Grau de Vulnerabilidade
   let grauVulnerabilidade: 'Baixa' | 'Media' | 'Alta' | 'Extrema' = 'Media';
   const renda = input.rendaFamiliar || 0;
   const membros = Math.max(1, input.membrosFamilia || 1);
@@ -67,7 +104,6 @@ export async function generateStructuredPetition(
     grauVulnerabilidade = 'Baixa';
   }
 
-  // 3. Gerar Título e Competência da Vara
   let tituloCaso = '';
   let competenciaVara = '';
   let fundamentacao = '';
@@ -134,10 +170,8 @@ export async function generateStructuredPetition(
       break;
   }
 
-  // 4. Estruturar Resumo Fático
-  const resumoFatos = `O(A) cidadão(ã) ${input.nomeCidadao}, residente na comarca de ${input.comarcaNome}/${input.uf}, relata a seguinte situação de vulnerabilidade e necessidade de provimento jurisdicional: "${input.descricaoLivre.trim()}". Diante do perfil socioeconômico de vulnerabilidade declarada (${grauVulnerabilidade}) e ausência de condições financeiras para contratação de advogado particular sem prejuízo do próprio sustento, postula a intervenção célere do sistema de advocacia dativa.`;
+  const resumoFatos = `O(A) cidadão(ã) ${input.nomeCidadao}, residente na comarca de ${input.comarcaNome}/${input.uf}, relata a seguinte situação fática: "${input.descricaoLivre.trim()}". Diante da vulnerabilidade socioeconômica declarada (${grauVulnerabilidade}) e ausência de recursos para contratação de patrono particular sem desfalque ao próprio sustento, requer a nomeação de advogado dativo credenciado.`;
 
-  // 5. Compilar Petição em Markdown
   const requerimentoEstruturadoMd = `### EXCELENTÍSSIMO(A) SENHOR(A) DOUTOR(A) JUIZ(A) DE DIREITO DA ${competenciaVara.toUpperCase()}
 
 **PROTOCOLO ELETRÔNICO DE ATENDIMENTO DATIVO - PLATAFORMA MATCH JURÍDICO**
@@ -187,6 +221,7 @@ Pede Deferimento.
     fundamentacaoJuridica: fundamentacao,
     pedidosFinais: pedidos,
     competenciaVaraSugerida: competenciaVara,
-    grauVulnerabilidade
+    grauVulnerabilidade,
+    provedorIa: 'motor-juridico-deterministico',
   };
 }
