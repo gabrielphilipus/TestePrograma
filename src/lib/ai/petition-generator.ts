@@ -232,7 +232,7 @@ function generateDeterministicPetition(input: GeneratePetitionInput): GeneratedP
 **REQUERENTE:** ${input.nomeCidadao.toUpperCase()}, brasileiro(a), hipossuficiente na acepção jurídica do termo, inscrito(a) no CPF sob o nº ${input.cpf || '***.***.***-**'}, domiciliado(a) na Comarca de ${input.comarcaNome} - ${input.uf}.
 **OBJETO:** ${tituloCaso.toUpperCase()}
 **ESPECIALIDADE:** ${especialidade.nome.toUpperCase()}
-**GRAU DE PRIORIDADE:** ${input.possuiUrgencia ? '🔴 URGENTE (Art. 300 CPC)' : '🟡 REGULAR'}
+**GRAU DE PRIORIDADE:** ${input.possuiUrgencia ? 'URGENTE (Art. 300 CPC)' : 'REGULAR'}
 **GRAU DE VULNERABILIDADE SOCIAL:** ${grauVulnerabilidade.toUpperCase()}
 
 ---
@@ -247,7 +247,7 @@ Em razão da carência e distribuição regional de defensores públicos na loca
 #### II. DOS FATOS CONCRETOS
 ${resumoFatos}
 
-${input.possuiUrgencia ? `> ⚠️ **DA URGÊNCIA QUALIFICADA:** A demora na prestação jurisdicional e designação defensiva acarreta perigo de dano irreparável ou risco ao resultado útil do processo, justificando tramitação prioritária nos termos do Art. 300 do CPC.` : ''}
+${input.possuiUrgencia ? `> **DA URGÊNCIA QUALIFICADA:** A demora na prestação jurisdicional e designação defensiva acarreta perigo de dano irreparável ou risco ao resultado útil do processo, justificando tramitação prioritária nos termos do Art. 300 do CPC.` : ''}
 
 ---
 
@@ -269,7 +269,7 @@ Pede Deferimento.
 
 ---
 
-> ⚖️ **AVISO DE RESPONSABILIDADE ÉTICA E TÉCNICA (LEI FEDERAL Nº 8.906/94):**  
+> **AVISO DE RESPONSABILIDADE ÉTICA E TÉCNICA (LEI FEDERAL Nº 8.906/94):**  
 > *Esta minuta constitui documento preliminar de apoio estruturado por Inteligência Artificial a partir do relato do cidadão. A análise de admissibilidade, adequação probatória, fundamentação processual e protocolo formal perante o Poder Judiciário são de responsabilidade e prerrogativa técnica exclusiva do(a) Advogado(a) Dativo(a) que aceitar o caso.*`;
 
   return {

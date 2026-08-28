@@ -179,7 +179,7 @@ Relato livre do cidadão: "${descricaoLivre}"`,
 
 **REQUERENTE:** ${nomeCidadao.toUpperCase()}, brasileiro(a), hipossuficiente.
 **OBJETO:** ${tituloCaso.toUpperCase()}
-**GRAU DE PRIORIDADE:** ${possuiUrgencia ? '🔴 URGENTE (Art. 300 CPC)' : '🟡 REGULAR'}
+**GRAU DE PRIORIDADE:** ${possuiUrgencia ? 'URGENTE (Art. 300 CPC)' : 'REGULAR'}
 
 ---
 
@@ -208,7 +208,7 @@ Pede Deferimento.
 
 ---
 
-> ⚖️ **AVISO DE RESPONSABILIDADE ÉTICA E TÉCNICA (LEI FEDERAL Nº 8.906/94):**  
+> **AVISO DE RESPONSABILIDADE ÉTICA E TÉCNICA (LEI FEDERAL Nº 8.906/94):**  
 > *Esta minuta constitui documento preliminar de apoio estruturado por Inteligência Artificial a partir do relato do cidadão. A análise de admissibilidade, adequação probatória, fundamentação processual e protocolo formal perante o Poder Judiciário são de responsabilidade e prerrogativa técnica exclusiva do(a) Advogado(a) Dativo(a) que aceitar o caso.*`,
     });
 

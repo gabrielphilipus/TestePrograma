@@ -170,15 +170,15 @@ ${descricaoLivre}
       
       {/* Barra de Progresso */}
       <div className="mb-8">
-        <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-          <span className={step >= 1 ? 'text-cyan-400' : ''}>1. Dados Básicos</span>
-          <span className={step >= 2 ? 'text-cyan-400' : ''}>2. Relato Livre</span>
-          <span className={step >= 3 ? 'text-cyan-400' : ''}>3. IA Jurídica</span>
-          <span className={step >= 4 ? 'text-cyan-400' : ''}>4. Protocolo & Match</span>
+        <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+          <span className={step >= 1 ? 'text-blue-600 dark:text-cyan-400 font-extrabold' : ''}>1. Dados Básicos</span>
+          <span className={step >= 2 ? 'text-blue-600 dark:text-cyan-400 font-extrabold' : ''}>2. Relato Livre</span>
+          <span className={step >= 3 ? 'text-blue-600 dark:text-cyan-400 font-extrabold' : ''}>3. IA Jurídica</span>
+          <span className={step >= 4 ? 'text-blue-600 dark:text-cyan-400 font-extrabold' : ''}>4. Protocolo & Match</span>
         </div>
-        <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+        <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
           <div 
-            className="bg-gradient-to-r from-blue-600 via-cyan-400 to-emerald-400 h-full transition-all duration-500"
+            className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 h-full transition-all duration-500"
             style={{ width: `${(step / 4) * 100}%` }}
           ></div>
         </div>
@@ -186,36 +186,36 @@ ${descricaoLivre}
 
       {/* ETAPA 1: Comarca e Perfil */}
       {step === 1 && (
-        <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-blue-500/20 shadow-2xl space-y-6">
+        <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-blue-500/20 shadow-xl space-y-6">
           <div>
-            <div className="flex items-center space-x-2 text-xs font-bold text-cyan-400 uppercase tracking-wider mb-1">
+            <div className="flex items-center space-x-2 text-xs font-bold text-blue-600 dark:text-cyan-400 uppercase tracking-wider mb-1">
               <MapPin className="w-4 h-4" />
               <span>Etapa 1 de 4</span>
             </div>
-            <h2 className="text-2xl font-bold text-white">Onde o problema aconteceu?</h2>
-            <p className="text-xs text-slate-400 mt-1">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Onde o problema aconteceu?</h2>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
               A comarca é fundamental para definirmos a competência do tribunal e acionarmos advogados dativos da região.
             </p>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
                 Comarca / Município do Paraná:
               </label>
               <select
                 value={comarcaId}
                 onChange={(e) => setComarcaId(e.target.value)}
-                className="w-full bg-navy-900 border border-blue-700/50 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-cyan-400"
+                className="w-full bg-white dark:bg-navy-900 border border-slate-300 dark:border-blue-700/50 rounded-xl px-4 py-3 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-blue-500 dark:focus:border-cyan-400 shadow-sm"
               >
                 {COMARCAS_DATA.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.nome} ({c.regiao}) — {c.is_deserto_juridico ? '⚠️ DESERTO JURÍDICO (Carência de Advogados)' : 'Comarca Coberta'}
+                  <option key={c.id} value={c.id} className="text-slate-900 dark:text-white bg-white dark:bg-navy-900">
+                    {c.nome} ({c.regiao}) — {c.is_deserto_juridico ? 'Deserto Jurídico (Carência de Advogados)' : 'Comarca Coberta'}
                   </option>
                 ))}
               </select>
               {selectedComarca.is_deserto_juridico && (
-                <p className="text-[11px] text-amber-400 mt-1.5 flex items-center space-x-1">
+                <p className="text-[11px] text-amber-600 dark:text-amber-400 mt-1.5 flex items-center space-x-1">
                   <AlertCircle className="w-3.5 h-3.5" />
                   <span>
                     Esta comarca possui carência crítica de defensores (Score de Oportunidade {selectedComarca.score_oportunidade}). O sistema ativará a busca com raio expandido automaticamente.
@@ -226,7 +226,7 @@ ${descricaoLivre}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
                   Renda Familiar Mensal (R$):
                 </label>
                 <input
@@ -234,13 +234,13 @@ ${descricaoLivre}
                   value={rendaFamiliar}
                   onChange={(e) => setRendaFamiliar(e.target.value)}
                   placeholder="Ex: 1200"
-                  className="w-full bg-navy-900 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-400"
+                  className="w-full bg-white dark:bg-navy-900 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-blue-500 dark:focus:border-cyan-400 shadow-sm"
                 />
-                <span className="text-[10px] text-slate-400">Critério para gratuidade de justiça</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400">Critério para gratuidade de justiça</span>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
                   Membros da Família que dependem dessa renda:
                 </label>
                 <input
@@ -248,19 +248,19 @@ ${descricaoLivre}
                   value={membrosFamilia}
                   onChange={(e) => setMembrosFamilia(e.target.value)}
                   min="1"
-                  className="w-full bg-navy-900 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-400"
+                  className="w-full bg-white dark:bg-navy-900 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-blue-500 dark:focus:border-cyan-400 shadow-sm"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">CEP:</label>
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">CEP:</label>
               <input
                 type="text"
                 value={cep}
                 onChange={(e) => setCep(e.target.value)}
                 placeholder="00000-000"
-                className="w-full max-w-xs bg-navy-900 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-400"
+                className="w-full max-w-xs bg-white dark:bg-navy-900 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-blue-500 dark:focus:border-cyan-400 shadow-sm"
               />
             </div>
           </div>
@@ -269,7 +269,7 @@ ${descricaoLivre}
             <button
               type="button"
               onClick={() => setStep(2)}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-sm shadow-lg flex items-center space-x-2"
+              className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold text-sm shadow-lg flex items-center space-x-2"
             >
               <span>Avançar para o Relato</span>
               <ArrowRight className="w-4 h-4" />
@@ -280,40 +280,40 @@ ${descricaoLivre}
 
       {/* ETAPA 2: Relato em Linguagem Simples */}
       {step === 2 && (
-        <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-blue-500/20 shadow-2xl space-y-6">
+        <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-blue-500/20 shadow-xl space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <div className="flex items-center space-x-2 text-xs font-bold text-cyan-400 uppercase tracking-wider mb-1">
+              <div className="flex items-center space-x-2 text-xs font-bold text-blue-600 dark:text-cyan-400 uppercase tracking-wider mb-1">
                 <Sparkles className="w-4 h-4" />
                 <span>Etapa 2 de 4</span>
               </div>
-              <h2 className="text-2xl font-bold text-white">Conte o que está acontecendo</h2>
-              <p className="text-xs text-slate-400 mt-1">
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Conte o que está acontecendo</h2>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                 Escreva livremente com suas palavras. Nossa IA Jurídica organizará os fatos e artigos da lei.
               </p>
             </div>
 
             {/* Atalhos rápidos para demo no pitch */}
             <div className="flex flex-wrap gap-1.5">
-              <span className="text-[10px] text-slate-400 self-center">Exemplos rápidos:</span>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 self-center">Exemplos rápidos:</span>
               <button
                 type="button"
                 onClick={() => handleQuickFill('pensao')}
-                className="px-2.5 py-1 rounded-lg bg-blue-500/10 text-cyan-300 text-xs border border-blue-500/30 hover:bg-blue-500/20"
+                className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-cyan-300 text-xs border border-blue-200 dark:border-blue-500/30 hover:bg-blue-100 dark:hover:bg-blue-500/20"
               >
                 Pensão / Guarda
               </button>
               <button
                 type="button"
                 onClick={() => handleQuickFill('inss')}
-                className="px-2.5 py-1 rounded-lg bg-blue-500/10 text-cyan-300 text-xs border border-blue-500/30 hover:bg-blue-500/20"
+                className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-cyan-300 text-xs border border-blue-200 dark:border-blue-500/30 hover:bg-blue-100 dark:hover:bg-blue-500/20"
               >
                 INSS Rural
               </button>
               <button
                 type="button"
                 onClick={() => handleQuickFill('remedio')}
-                className="px-2.5 py-1 rounded-lg bg-blue-500/10 text-cyan-300 text-xs border border-blue-500/30 hover:bg-blue-500/20"
+                className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-cyan-300 text-xs border border-blue-200 dark:border-blue-500/30 hover:bg-blue-100 dark:hover:bg-blue-500/20"
               >
                 Remédio SUS
               </button>
@@ -326,23 +326,23 @@ ${descricaoLivre}
               value={descricaoLivre}
               onChange={(e) => setDescricaoLivre(e.target.value)}
               placeholder="Exemplo: Preciso que o pai dos meus filhos pague a pensão que combinamos verbalmente. Estou desempregada e não consigo sustentar as crianças sozinha..."
-              className="w-full bg-navy-900 border border-blue-700/40 rounded-2xl p-4 text-white text-sm focus:outline-none focus:border-cyan-400 transition-colors"
+              className="w-full bg-white dark:bg-navy-900 border border-slate-300 dark:border-blue-700/40 rounded-2xl p-4 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-blue-500 dark:focus:border-cyan-400 transition-colors shadow-sm"
             />
           </div>
 
-          <div className="p-4 rounded-xl bg-navy-900 border border-slate-800 flex items-center justify-between">
+          <div className="p-4 rounded-xl bg-slate-50 dark:bg-navy-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <ShieldAlert className={`w-5 h-5 ${possuiUrgencia ? 'text-crimson' : 'text-slate-400'}`} />
+              <ShieldAlert className={`w-5 h-5 ${possuiUrgencia ? 'text-red-500' : 'text-slate-400'}`} />
               <div>
-                <h4 className="text-xs font-bold text-white">Este caso tem perigo imediato ou urgência?</h4>
-                <p className="text-[11px] text-slate-400">Ex: risco à saúde, corte de alimentos, perda de prazo processual.</p>
+                <h4 className="text-xs font-bold text-slate-900 dark:text-white">Este caso tem perigo imediato ou urgência?</h4>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">Ex: risco à saúde, corte de alimentos, perda de prazo processual.</p>
               </div>
             </div>
             <input
               type="checkbox"
               checked={possuiUrgencia}
               onChange={(e) => setPossuiUrgencia(e.target.checked)}
-              className="w-5 h-5 rounded accent-cyan-400 cursor-pointer"
+              className="w-5 h-5 rounded accent-blue-600 dark:accent-cyan-400 cursor-pointer"
             />
           </div>
 
@@ -350,7 +350,7 @@ ${descricaoLivre}
             <button
               type="button"
               onClick={() => setStep(1)}
-              className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-xs hover:bg-slate-700"
+              className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs border border-slate-200 dark:border-slate-700"
             >
               ← Voltar
             </button>
@@ -359,7 +359,7 @@ ${descricaoLivre}
               type="button"
               disabled={!descricaoLivre.trim() || isGeneratingAi}
               onClick={handleGeneratePetition}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-sm shadow-lg flex items-center space-x-2 disabled:opacity-50"
+              className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold text-sm shadow-lg flex items-center space-x-2 disabled:opacity-50"
             >
               {isGeneratingAi ? (
                 <>
@@ -379,53 +379,53 @@ ${descricaoLivre}
 
       {/* ETAPA 3: Revisão da Petição Estruturada pela IA */}
       {step === 3 && aiResult && (
-        <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-cyan-500/30 shadow-2xl space-y-6">
-          <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-blue-200 dark:border-cyan-500/30 shadow-xl space-y-6">
+          <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
             <div>
-              <div className="flex items-center space-x-2 text-xs font-bold text-cyan-400 uppercase tracking-wider mb-1">
+              <div className="flex items-center space-x-2 text-xs font-bold text-blue-600 dark:text-cyan-400 uppercase tracking-wider mb-1">
                 <Sparkles className="w-4 h-4" />
                 <span>Petição Estruturada com Sucesso pela IA</span>
               </div>
-              <h2 className="text-xl font-bold text-white">{aiResult.tituloCaso}</h2>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">{aiResult.tituloCaso}</h2>
             </div>
-            <span className="px-3 py-1 rounded-full bg-blue-500/20 border border-cyan-400/30 text-cyan-300 text-xs font-bold">
+            <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-cyan-400/30 text-blue-800 dark:text-cyan-300 text-xs font-bold">
               {aiResult.especialidade.nome}
             </span>
           </div>
 
           {/* Destaques Rápidos da Peça */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="p-3 rounded-xl bg-navy-900 border border-slate-800">
-              <span className="text-[10px] text-slate-400 font-semibold uppercase">Vara Competente Sugerida</span>
-              <p className="text-xs font-bold text-white mt-0.5">{aiResult.competenciaVaraSugerida}</p>
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-navy-900 border border-slate-200 dark:border-slate-800">
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold uppercase">Vara Competente Sugerida</span>
+              <p className="text-xs font-bold text-slate-900 dark:text-white mt-0.5">{aiResult.competenciaVaraSugerida}</p>
             </div>
 
-            <div className="p-3 rounded-xl bg-navy-900 border border-slate-800">
-              <span className="text-[10px] text-slate-400 font-semibold uppercase">Vulnerabilidade Social</span>
-              <p className="text-xs font-bold text-emerald-400 mt-0.5">{aiResult.grauVulnerabilidade}</p>
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-navy-900 border border-slate-200 dark:border-slate-800">
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold uppercase">Vulnerabilidade Social</span>
+              <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">{aiResult.grauVulnerabilidade}</p>
             </div>
 
-            <div className="p-3 rounded-xl bg-navy-900 border border-slate-800">
-              <span className="text-[10px] text-slate-400 font-semibold uppercase">Fundamentação Legal</span>
-              <p className="text-xs font-bold text-indigo-300 mt-0.5 truncate">{aiResult.fundamentacaoJuridica}</p>
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-navy-900 border border-slate-200 dark:border-slate-800">
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold uppercase">Fundamentação Legal</span>
+              <p className="text-xs font-bold text-indigo-700 dark:text-indigo-300 mt-0.5 truncate">{aiResult.fundamentacaoJuridica}</p>
             </div>
           </div>
 
           {/* Preview do Documento Markdown */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-2">
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">
               Visualização da Minuta do Requerimento Inicial:
             </label>
-            <div className="p-5 rounded-2xl bg-navy-900/90 border border-slate-800 max-h-80 overflow-y-auto font-mono text-xs text-slate-200 leading-relaxed whitespace-pre-wrap">
+            <div className="p-5 rounded-2xl bg-white dark:bg-navy-900/90 border border-slate-200 dark:border-slate-800 max-h-80 overflow-y-auto font-mono text-xs text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-wrap shadow-inner">
               {aiResult.requerimentoEstruturadoMd}
             </div>
           </div>
 
           {/* Card de Disclaimer Obrigatório da OAB */}
-          <div className="p-4 rounded-2xl bg-blue-950/40 border border-blue-500/30 flex items-start space-x-3">
-            <Scale className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
-            <div className="text-xs text-slate-300 leading-relaxed">
-              <strong className="text-white block font-bold mb-0.5">Revisão Humana e Prerrogativa Profissional (Lei 8.906/94):</strong>
+          <div className="p-4 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-500/30 flex items-start space-x-3">
+            <Scale className="w-5 h-5 text-blue-600 dark:text-cyan-400 shrink-0 mt-0.5" />
+            <div className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+              <strong className="text-slate-900 dark:text-white block font-bold mb-0.5">Revisão Humana e Prerrogativa Profissional (Lei 8.906/94):</strong>
               Este documento foi gerado por IA com base nas suas informações e serve de base para o seu defensor. O advogado dativo que aceitar o caso fará a validação jurídica completa e as adaptações necessárias antes de qualquer protocolo judicial.
             </div>
           </div>
@@ -434,7 +434,7 @@ ${descricaoLivre}
             <button
               type="button"
               onClick={() => setStep(2)}
-              className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-xs hover:bg-slate-700"
+              className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs border border-slate-200 dark:border-slate-700"
             >
               ← Editar Relato
             </button>
@@ -442,7 +442,7 @@ ${descricaoLivre}
             <button
               type="button"
               onClick={handleFinalSubmit}
-              className="px-8 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-navy-900 font-extrabold text-sm shadow-xl flex items-center space-x-2"
+              className="px-8 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-700 hover:to-cyan-700 text-white font-extrabold text-sm shadow-xl flex items-center space-x-2"
             >
               <Send className="w-4 h-4" />
               <span>Confirmar & Iniciar Matching de Dativos →</span>
@@ -453,37 +453,37 @@ ${descricaoLivre}
 
       {/* ETAPA 4: Sucesso, Protocolo e Fila de Matching */}
       {step === 4 && generatedRequerimento && (
-        <div className="glass-panel rounded-3xl p-8 sm:p-10 border border-emerald-500/40 shadow-2xl text-center space-y-6">
-          <div className="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center mx-auto text-emerald-400 animate-bounce">
+        <div className="glass-panel rounded-3xl p-8 sm:p-10 border border-emerald-300 dark:border-emerald-500/40 shadow-2xl text-center space-y-6">
+          <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-500/20 border border-emerald-300 dark:border-emerald-500/40 flex items-center justify-center mx-auto text-emerald-600 dark:text-emerald-400 animate-bounce">
             <CheckCircle2 className="w-8 h-8" />
           </div>
 
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
               Protocolo Gerado com Sucesso
             </span>
-            <h2 className="text-3xl font-extrabold text-white mt-1">
+            <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">
               {generatedRequerimento.protocolo}
             </h2>
-            <p className="text-xs text-slate-400 mt-2 max-w-md mx-auto">
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 max-w-md mx-auto">
               Seu pedido já foi autuado e está visível para os advogados dativos de{' '}
-              <strong className="text-white">{selectedComarca.nome}</strong> e região.
+              <strong className="text-slate-900 dark:text-white">{selectedComarca.nome}</strong> e região.
             </p>
           </div>
 
           {/* Badge de Matching Ativo */}
-          <div className="p-4 rounded-2xl bg-navy-900 border border-blue-900/50 max-w-md mx-auto text-left space-y-2">
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-navy-900 border border-slate-200 dark:border-blue-900/50 max-w-md mx-auto text-left space-y-2">
             <div className="flex justify-between text-xs">
-              <span className="text-slate-400">Comarca:</span>
-              <span className="font-bold text-white">{selectedComarca.nome} - {selectedComarca.uf}</span>
+              <span className="text-slate-500 dark:text-slate-400">Comarca:</span>
+              <span className="font-bold text-slate-900 dark:text-white">{selectedComarca.nome} - {selectedComarca.uf}</span>
             </div>
             <div className="flex justify-between text-xs">
-              <span className="text-slate-400">Raio de Busca Efetivo:</span>
-              <span className="font-bold text-cyan-300">{generatedRequerimento.raio_busca_efetivo_km} km</span>
+              <span className="text-slate-500 dark:text-slate-400">Raio de Busca Efetivo:</span>
+              <span className="font-bold text-blue-600 dark:text-cyan-300">{generatedRequerimento.raio_busca_efetivo_km} km</span>
             </div>
             <div className="flex justify-between text-xs">
-              <span className="text-slate-400">Status Atual:</span>
-              <span className="font-bold text-amber-400 uppercase text-[11px]">Aguardando Aceite do Dativo</span>
+              <span className="text-slate-500 dark:text-slate-400">Status Atual:</span>
+              <span className="font-bold text-amber-600 dark:text-amber-400 uppercase text-[11px]">Aguardando Aceite do Dativo</span>
             </div>
           </div>
 
@@ -496,7 +496,7 @@ ${descricaoLivre}
             </button>
             <button
               onClick={() => router.push(`/verificar/${generatedRequerimento.hash_autenticidade}`)}
-              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-navy-800 hover:bg-navy-700 text-slate-200 font-bold text-sm border border-slate-700"
+              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-navy-800 dark:hover:bg-navy-700 text-slate-800 dark:text-slate-200 font-bold text-sm border border-slate-300 dark:border-slate-700"
             >
               Ver Certidão & QR Code
             </button>

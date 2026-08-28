@@ -83,7 +83,7 @@ export function getStoredMensagens(requerimentoId: string): Mensagem[] {
         id: `msg-welcome-${requerimentoId}`,
         requerimento_id: requerimentoId,
         sender_id: 'system',
-        conteudo: '⚖️ Atendimento iniciado via Match Jurídico. O requerimento foi aceito e o canal seguro de comunicação está ativo.',
+        conteudo: 'Atendimento iniciado via Match Jurídico. O requerimento foi aceito e o canal seguro de comunicação está ativo.',
         lida: true,
         created_at: new Date(Date.now() - 3600000).toISOString(),
       }

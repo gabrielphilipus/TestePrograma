@@ -33,15 +33,15 @@ export default function RadarComarcasPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       
       {/* Header do Radar */}
-      <div className="pb-8 border-b border-blue-900/30">
-        <div className="flex items-center space-x-2 text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">
+      <div className="pb-8 border-b border-slate-200 dark:border-blue-900/30">
+        <div className="flex items-center space-x-2 text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-2">
           <MapPin className="w-4 h-4" />
           <span>Observatório de Acesso à Justiça • Dados Reais OAB/PR</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">
           Radar de Comarcas & Desertos Jurídicos
         </h1>
-        <p className="text-sm text-slate-300 max-w-3xl mt-2 leading-relaxed">
+        <p className="text-sm text-slate-600 dark:text-slate-300 max-w-3xl mt-2 leading-relaxed">
           Monitoramento inteligente com base em dois pilares complementares: o <strong>Score de Oportunidade (0–100)</strong> (para atração e alocação estratégica de advogados) e a detecção de <strong>Desertos Jurídicos</strong> (comarcas com escassez crítica absoluta de advogados no local, ativando a expansão de raio geodésico para garantir atendimento ao cidadão).
         </p>
       </div>
@@ -49,37 +49,37 @@ export default function RadarComarcasPage() {
       {/* Destaques de Impacto */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
         
-        <div className="glass-panel p-6 rounded-3xl border border-amber-500/30">
+        <div className="glass-panel p-6 rounded-3xl border border-amber-300 dark:border-amber-500/30 shadow-md">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-slate-400 uppercase">Desertos Jurídicos</span>
-            <AlertTriangle className="w-5 h-5 text-amber-400" />
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Desertos Jurídicos</span>
+            <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
           </div>
-          <p className="text-3xl font-extrabold text-amber-300">
+          <p className="text-3xl font-extrabold text-amber-600 dark:text-amber-300">
             {COMARCAS_DATA.filter(c => c.is_deserto_juridico).length} Comarcas
           </p>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             Comarcas com escassez crítica absoluta (≤ 25 advogados ativos locais).
           </p>
         </div>
 
-        <div className="glass-panel p-6 rounded-3xl border border-cyan-500/30">
+        <div className="glass-panel p-6 rounded-3xl border border-blue-200 dark:border-cyan-500/30 shadow-md">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-slate-400 uppercase">Maior Score de Oportunidade</span>
-            <TrendingUp className="w-5 h-5 text-cyan-400" />
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Maior Score de Oportunidade</span>
+            <TrendingUp className="w-5 h-5 text-blue-600 dark:text-cyan-400" />
           </div>
-          <p className="text-3xl font-extrabold text-cyan-300">92.47 / 100</p>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-3xl font-extrabold text-blue-600 dark:text-cyan-300">92.47 / 100</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             Comarca de Goioerê/PR • 1.060 nomeações para 365 advogados (Alta Demanda OAB/PR).
           </p>
         </div>
 
-        <div className="glass-panel p-6 rounded-3xl border border-emerald-500/30">
+        <div className="glass-panel p-6 rounded-3xl border border-emerald-300 dark:border-emerald-500/30 shadow-md">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-slate-400 uppercase">Matching Geodésico</span>
-            <Sparkles className="w-5 h-5 text-emerald-400" />
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Matching Geodésico</span>
+            <Sparkles className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <p className="text-3xl font-extrabold text-emerald-300">Raio Dinâmico</p>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-300">Raio Dinâmico</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             Prioriza comarca local (35 km) e expande até 120–250 km apenas em desertos reais.
           </p>
         </div>
@@ -96,7 +96,7 @@ export default function RadarComarcasPage() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Buscar por comarca (ex: Reserva, Londrina, Curitiba...)"
-            className="w-full bg-navy-900 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-400"
+            className="w-full bg-white dark:bg-navy-900 border border-slate-300 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-cyan-400 shadow-sm"
           />
         </div>
 
@@ -104,7 +104,7 @@ export default function RadarComarcasPage() {
           <button
             onClick={() => setFilterType('todos')}
             className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
-              filterType === 'todos' ? 'bg-blue-600 text-white' : 'bg-navy-900 text-slate-400 hover:text-white border border-slate-800'
+              filterType === 'todos' ? 'bg-blue-600 text-white shadow-sm' : 'bg-white dark:bg-navy-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800'
             }`}
           >
             Todas ({COMARCAS_DATA.length})
@@ -112,29 +112,29 @@ export default function RadarComarcasPage() {
           <button
             onClick={() => setFilterType('desertos')}
             className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
-              filterType === 'desertos' ? 'bg-amber-600 text-white' : 'bg-navy-900 text-slate-400 hover:text-white border border-slate-800'
+              filterType === 'desertos' ? 'bg-amber-600 text-white shadow-sm' : 'bg-white dark:bg-navy-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800'
             }`}
           >
-            ⚠️ Apenas Desertos
+            Apenas Desertos
           </button>
           <button
             onClick={() => setFilterType('cobertas')}
             className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
-              filterType === 'cobertas' ? 'bg-emerald-600 text-white' : 'bg-navy-900 text-slate-400 hover:text-white border border-slate-800'
+              filterType === 'cobertas' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-white dark:bg-navy-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800'
             }`}
           >
-            ✓ Comarcas Cobertas
+            Comarcas Cobertas
           </button>
         </div>
 
       </div>
 
       {/* Tabela Interativa de Comarcas */}
-      <div className="glass-panel rounded-3xl overflow-hidden border border-blue-900/40 shadow-2xl">
+      <div className="glass-panel rounded-3xl overflow-hidden border border-slate-200 dark:border-blue-900/40 shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             
-            <thead className="bg-navy-900/90 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800">
+            <thead className="bg-slate-100 dark:bg-navy-900/90 text-slate-600 dark:text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-200 dark:border-slate-800">
               <tr>
                 <th className="px-6 py-4 font-bold">Comarca / Região</th>
                 <th className="px-6 py-4 font-bold">População Estimada</th>
@@ -145,58 +145,58 @@ export default function RadarComarcasPage() {
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-slate-800/80">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-800/80">
               {filteredComarcas.map((comarca) => (
-                <tr key={comarca.id} className="hover:bg-navy-850/60 transition-colors">
+                <tr key={comarca.id} className="hover:bg-slate-50 dark:hover:bg-navy-850/60 transition-colors">
                   
                   {/* Nome & Status */}
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-3">
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs ${
-                        comarca.is_deserto_juridico ? 'bg-amber-500/20 text-amber-300' : 'bg-blue-500/20 text-cyan-300'
+                        comarca.is_deserto_juridico ? 'bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300' : 'bg-blue-100 dark:bg-blue-500/20 text-blue-800 dark:text-cyan-300'
                       }`}>
                         {comarca.uf}
                       </div>
                       <div>
                         <div className="flex items-center space-x-2">
-                          <span className="font-bold text-white text-sm">{comarca.nome}</span>
+                          <span className="font-bold text-slate-900 dark:text-white text-sm">{comarca.nome}</span>
                           {comarca.is_deserto_juridico && (
-                            <span className="px-2 py-0.2 rounded-full bg-amber-500/20 text-amber-300 text-[9px] font-bold border border-amber-500/30">
+                            <span className="px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 text-[9px] font-bold border border-amber-300 dark:border-amber-500/30">
                               Deserto
                             </span>
                           )}
                         </div>
-                        <span className="text-[11px] text-slate-400">{comarca.regiao}</span>
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400">{comarca.regiao}</span>
                       </div>
                     </div>
                   </td>
 
                   {/* População */}
-                  <td className="px-6 py-4 text-slate-300 font-medium">
+                  <td className="px-6 py-4 text-slate-700 dark:text-slate-300 font-medium">
                     {comarca.populacao.toLocaleString('pt-BR')} hab.
                   </td>
 
                   {/* Advogados Ativos */}
                   <td className="px-6 py-4">
-                    <span className={`font-bold ${comarca.num_advogados_ativos <= 3 ? 'text-amber-400' : 'text-slate-200'}`}>
+                    <span className={`font-bold ${comarca.num_advogados_ativos <= 3 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-800 dark:text-slate-200'}`}>
                       {comarca.num_advogados_ativos} advogados
                     </span>
                   </td>
 
                   {/* Processos */}
-                  <td className="px-6 py-4 text-slate-300">
+                  <td className="px-6 py-4 text-slate-700 dark:text-slate-300">
                     {comarca.total_processos_ano.toLocaleString('pt-BR')}
                   </td>
 
                   {/* Score de Oportunidade Bar */}
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-2">
-                      <span className={`font-extrabold text-sm ${comarca.score_oportunidade >= 85.0 ? 'text-amber-400' : 'text-cyan-400'}`}>
+                      <span className={`font-extrabold text-sm ${comarca.score_oportunidade >= 85.0 ? 'text-amber-600 dark:text-amber-400' : 'text-blue-600 dark:text-cyan-400'}`}>
                         {comarca.score_oportunidade}
                       </span>
-                      <div className="w-20 bg-slate-800 h-2 rounded-full overflow-hidden">
+                      <div className="w-20 bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
                         <div 
-                          className={`h-full ${comarca.score_oportunidade >= 85.0 ? 'bg-amber-500' : 'bg-cyan-400'}`}
+                          className={`h-full ${comarca.score_oportunidade >= 85.0 ? 'bg-amber-500' : 'bg-gradient-to-r from-blue-500 to-cyan-400'}`}
                           style={{ width: `${comarca.score_oportunidade}%` }}
                         ></div>
                       </div>
@@ -207,7 +207,7 @@ export default function RadarComarcasPage() {
                   <td className="px-6 py-4 text-right">
                     <Link
                       href={`/cidadao/novo-caso?comarca=${comarca.id}`}
-                      className="inline-flex items-center space-x-1 text-cyan-400 hover:text-cyan-300 font-bold text-xs"
+                      className="inline-flex items-center space-x-1 text-blue-600 dark:text-cyan-400 hover:text-blue-700 dark:hover:text-cyan-300 font-bold text-xs"
                     >
                       <span>Pedir Aqui</span>
                       <ArrowRight className="w-3.5 h-3.5" />
