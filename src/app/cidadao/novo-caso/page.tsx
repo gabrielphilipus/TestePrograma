@@ -395,6 +395,15 @@ export default function NovoCasoPage() {
             </div>
           </div>
 
+          {/* Card de Disclaimer Obrigatório da OAB */}
+          <div className="p-4 rounded-2xl bg-blue-950/40 border border-blue-500/30 flex items-start space-x-3">
+            <Scale className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+            <div className="text-xs text-slate-300 leading-relaxed">
+              <strong className="text-white block font-bold mb-0.5">Revisão Humana e Prerrogativa Profissional (Lei 8.906/94):</strong>
+              Este documento foi gerado por IA com base nas suas informações e serve de base para o seu defensor. O advogado dativo que aceitar o caso fará a validação jurídica completa e as adaptações necessárias antes de qualquer protocolo judicial.
+            </div>
+          </div>
+
           <div className="pt-4 flex justify-between">
             <button
               type="button"

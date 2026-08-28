@@ -211,7 +211,12 @@ ${pedidos.map((p, idx) => `${idx + 1}. ${p}`).join('\n')}
 Termos em que, autuado este protocolo e formalizado o aceite pelo defensor,
 Pede Deferimento.
 
-**Comarca de ${input.comarcaNome}/${input.uf}**, ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}.`;
+**Comarca de ${input.comarcaNome}/${input.uf}**, ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}.
+
+---
+
+> ⚖️ **AVISO DE RESPONSABILIDADE ÉTICA E TÉCNICA (LEI FEDERAL Nº 8.906/94):**  
+> *Esta minuta constitui documento preliminar de apoio estruturado por Inteligência Artificial a partir do relato do cidadão. A análise de admissibilidade, adequação probatória, fundamentação processual e protocolo formal perante o Poder Judiciário são de responsabilidade e prerrogativa técnica exclusiva do(a) Advogado(a) Dativo(a) que aceitar o caso.*`;
 
   return {
     especialidade,

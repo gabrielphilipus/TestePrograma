@@ -5,6 +5,47 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { nomeCidadao, comarcaNome, uf, descricaoLivre, rendaFamiliar, membrosFamilia, possuiUrgencia } = body;
 
+    // Sanitização e Detecção de Prompt Injection
+    const sanitizeInput = (text: string): { cleanText: string; isInjectionAttempt: boolean } => {
+      if (!text) return { cleanText: '', isInjectionAttempt: false };
+      
+      const suspiciousPatterns = [
+        /ignore\s+(all\s+)?(previous|prior)\s+instructions/i,
+        /system\s+prompt/i,
+        /you\s+are\s+now/i,
+        /jailbreak/i,
+        /forget\s+all\s+rules/i,
+        /bypass\s+security/i,
+        /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+      ];
+
+      const isInjectionAttempt = suspiciousPatterns.some(pattern => pattern.test(text));
+      
+      // Remover caracteres de escape maliciosos mantendo pontuação válida
+      const cleanText = text
+        .replace(/[{}[\]\\]/g, '')
+        .replace(/<[^>]*>/g, '')
+        .trim();
+
+      return { cleanText, isInjectionAttempt };
+    };
+
+    const { cleanText: safeDescricao, isInjectionAttempt } = sanitizeInput(descricaoLivre || '');
+
+    if (isInjectionAttempt) {
+      return NextResponse.json({
+        source: 'guardrail-security',
+        especialidade_slug: 'civel-consumidor',
+        titulo_caso: 'Requerimento de Assistência Judiciária Gratuita',
+        resumo_fatos: 'Relato submetido pelo cidadão contendo termos não padronizados. O caso requer triagem direta e entrevista preliminar com o advogado dativo designado.',
+        fundamentacao_juridica: 'Art. 5º, LXXIV da Constituição Federal de 1988.',
+        pedidos_finais: ['Concessão de Assistência Judiciária Gratuita', 'Designação de Defensor Dativo'],
+        competencia_vara: `Vara da Comarca de ${comarcaNome}/${uf}`,
+        requerimento_estruturado_md: `### AVISO DE SEGURANÇA E TRIAGEM
+O relato do assistido passou pelo filtro de segurança e foi encaminhado para análise humana direta do advogado dativo credenciado.`,
+      });
+    }
+
     const anthropicKey = process.env.ANTHROPIC_API_KEY;
     const openAiKey = process.env.OPENAI_API_KEY;
     const geminiKey = process.env.GEMINI_API_KEY;

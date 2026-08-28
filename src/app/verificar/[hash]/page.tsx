@@ -198,6 +198,12 @@ export default function VerificarDocumentoPage() {
           </div>
         </div>
 
+        {/* Nota de Conformidade com o Estatuto da OAB */}
+        <div className="p-4 rounded-2xl bg-blue-950/30 border border-blue-800/40 text-[11px] text-slate-400 leading-relaxed print:text-slate-700 print:border-slate-300">
+          <strong className="text-slate-200 print:text-black block mb-0.5">Nota Ética e Jurídica:</strong>
+          A presente certidão atesta a autenticidade do protocolo inicial originado no sistema de triagem. Conforme os ditames da Lei Federal nº 8.906/94, os atos postulatórios e a condução judicial subsequente são de responsabilidade do profissional da advocacia regularmente habilitado.
+        </div>
+
         {/* Assinatura Digital & Hash SHA-256 */}
         <div className="pt-6 border-t border-slate-800 print:border-slate-300">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
