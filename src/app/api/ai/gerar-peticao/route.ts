@@ -130,8 +130,87 @@ Relato livre do cidadão: "${descricaoLivre}"`,
       }
     }
 
-    // Caso não haja chave externa configurada, informa para usar o gerador processual determinístico
-    return NextResponse.json({ source: 'local-deterministic', useFallback: true });
+    // 5. Fallback Deterministico com Classificação Semântica Precisa
+    const t = (safeDescricao || '').toLowerCase();
+    
+    let especialidadeSlug = 'c-vel';
+    let tituloCaso = 'Requerimento de Assistência Judiciária Gratuita';
+    let fundamentacao = 'Art. 5º, LXXIV da CF/88; Arts. 98 do CPC/15.';
+    let competenciaVara = `Vara Cível da Comarca de ${comarcaNome}/${uf}`;
+    let pedidos = ['Concessão da Justiça Gratuita', 'Nomeação de Defensor Dativo'];
+
+    if (t.includes('pensão') || t.includes('pensao') || t.includes('alimentos') || t.includes('guarda') || t.includes('filho') || t.includes('divórcio')) {
+      especialidadeSlug = 'fam-lia-e-sucess-es';
+      tituloCaso = 'Requerimento de Ação de Alimentos c/c Fixação de Alimentos Provisórios de Urgência';
+      competenciaVara = `Vara de Família e Sucessões da Comarca de ${comarcaNome}/${uf}`;
+      fundamentacao = 'Art. 227 da CF/88; Arts. 1.694 do Código Civil; Lei nº 5.478/68; Art. 300 do CPC.';
+      pedidos = ['Justiça Gratuita Integral', 'Designação prioritária de Dativo', 'Alimentos Provisórios de Urgência'];
+    } else if (t.includes('inss') || t.includes('trator') || t.includes('lavoura') || t.includes('auxílio') || t.includes('rural') || t.includes('incapacidade')) {
+      especialidadeSlug = 'acidentes-do-trabalho-compet-ncia-estadual';
+      tituloCaso = 'Requerimento de Assistência para Ação Previdenciária por Incapacidade c/c Tutela de Urgência';
+      competenciaVara = `Vara Cível (Competência Delegada Federal) de ${comarcaNome}/${uf}`;
+      fundamentacao = 'Art. 201, I da CF/88; Lei Federal nº 8.213/91; Art. 300 do CPC.';
+      pedidos = ['Justiça Gratuita', 'Designação de Dativo', 'Perícia Médica Judicial Prioritária', 'Tutela Provisória de Benefício'];
+    } else if (t.includes('remédio') || t.includes('remedio') || t.includes('medicamento') || t.includes('sus') || t.includes('farmácia') || t.includes('saúde') || t.includes('hospital')) {
+      especialidadeSlug = 'c-vel';
+      tituloCaso = 'Requerimento de Ação de Obrigação de Fazer para Fornecimento de Medicamento de Alto Custo (SUS)';
+      competenciaVara = `Vara da Fazenda Pública da Comarca de ${comarcaNome}/${uf}`;
+      fundamentacao = 'Arts. 6º e 196 da CF/88; Lei Federal nº 8.080/90; Tema 106 do STJ.';
+      pedidos = ['Justiça Gratuita', 'Nomeação de Dativo', 'Fornecimento Ininterrupto do Fármaco sob pena de sequestro de verbas'];
+    } else if (t.includes('preso') || t.includes('delegacia') || t.includes('flagrante') || t.includes('crime') || t.includes('furto') || t.includes('tráfico')) {
+      especialidadeSlug = 'criminal';
+      tituloCaso = 'Requerimento de Defesa Dativa em Matéria Criminal e Garantia Constitucional do Contraditório';
+      competenciaVara = `Vara Criminal da Comarca de ${comarcaNome}/${uf}`;
+      fundamentacao = 'Art. 5º, LV e LXXIV da CF/88; Arts. 261 e 263 do CPP; Lei Estadual 18.664/15.';
+      pedidos = ['Gratuidade da Justiça', 'Abertura de Prazo Defensivo para Dativo', 'Acesso aos Autos'];
+    }
+
+    return NextResponse.json({
+      source: 'local-deterministic',
+      especialidade_slug: especialidadeSlug,
+      titulo_caso: tituloCaso,
+      resumo_fatos: safeDescricao,
+      fundamentacao_juridica: fundamentacao,
+      pedidos_finais: pedidos,
+      competencia_vara: competenciaVara,
+      requerimento_estruturado_md: `### EXCELENTÍSSIMO(A) SENHOR(A) DOUTOR(A) JUIZ(A) DE DIREITO DA ${competenciaVara.toUpperCase()}
+
+**PROTOCOLO ELETRÔNICO DE ATENDIMENTO DATIVO - PLATAFORMA MATCH JURÍDICO**
+
+**REQUERENTE:** ${nomeCidadao.toUpperCase()}, brasileiro(a), hipossuficiente.
+**OBJETO:** ${tituloCaso.toUpperCase()}
+**GRAU DE PRIORIDADE:** ${possuiUrgencia ? '🔴 URGENTE (Art. 300 CPC)' : '🟡 REGULAR'}
+
+---
+
+#### I. DA HIPOSSUFICIÊNCIA E DO DIREITO À ASSISTÊNCIA DATIVA
+O(A) Requerente não possui condições econômicas de arcar com as custas do processo sem prejuízo do sustento próprio ou de sua família, fazendo jus à concessão de Assistência Judiciária Gratuita (Art. 5º, LXXIV da CF/88 e Art. 98 do CPC).
+
+---
+
+#### II. DOS FATOS CONCRETOS
+${safeDescricao}
+
+---
+
+#### III. DOS FUNDAMENTOS JURÍDICOS
+${fundamentacao}
+
+---
+
+#### IV. DOS PEDIDOS E REQUERIMENTOS
+${pedidos.map((p, i) => `${i + 1}. ${p}`).join('\n')}
+
+Termos em que, autuado este protocolo e formalizado o aceite pelo defensor,
+Pede Deferimento.
+
+**Comarca de ${comarcaNome}/${uf}**, ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}.
+
+---
+
+> ⚖️ **AVISO DE RESPONSABILIDADE ÉTICA E TÉCNICA (LEI FEDERAL Nº 8.906/94):**  
+> *Esta minuta constitui documento preliminar de apoio estruturado por Inteligência Artificial a partir do relato do cidadão. A análise de admissibilidade, adequação probatória, fundamentação processual e protocolo formal perante o Poder Judiciário são de responsabilidade e prerrogativa técnica exclusiva do(a) Advogado(a) Dativo(a) que aceitar o caso.*`,
+    });
 
   } catch (error: any) {
     console.error('Erro na rota de IA:', error);

@@ -44,7 +44,7 @@ export async function generateStructuredPetition(
       if (data.source && (data.source.includes('anthropic') || data.source.includes('openai'))) {
         const foundEsp = ESPECIALIDADES_DATA.find(
           e => e.slug === data.especialidade_slug || e.id === data.especialidade_slug || e.nome.toLowerCase().includes(String(data.especialidade_slug).toLowerCase())
-        ) || ESPECIALIDADES_DATA[0];
+        ) || findSpecialtyByText(input.descricaoLivre);
 
         return {
           especialidade: foundEsp,
@@ -63,50 +63,73 @@ export async function generateStructuredPetition(
     console.warn('Utilizando motor estruturado local para geração de petição:', err);
   }
 
-  // 2. Motor Processual Local de Alta Fidelidade (Garantia de 100% de Funcionamento)
+  // 2. Motor Processual Local de Alta Precisão (Deterministic Expert Engine)
   return generateDeterministicPetition(input);
 }
 
-function generateDeterministicPetition(input: GeneratePetitionInput): GeneratedPetitionOutput {
-  const textoMinusculo = (input.descricaoLivre || '').toLowerCase();
+// Localizador resiliente de especialidades oficiais da OAB/PR
+function findSpecialtyByText(texto: string): Especialidade {
+  const t = texto.toLowerCase();
 
-  // Helper para buscar especialidade de forma resiliente
-  const getEspecialidade = (keyword: string): Especialidade => {
+  // 1. Família e Sucessões
+  if (t.includes('pensão') || t.includes('pensao') || t.includes('alimentos') || t.includes('guarda') || t.includes('divórcio') || t.includes('divorcio') || t.includes('filho') || t.includes('paternidade') || t.includes('visita') || t.includes('inventário') || t.includes('inventario') || t.includes('herança') || t.includes('heranca')) {
     return (
-      ESPECIALIDADES_DATA.find(e => 
-        e.slug.toLowerCase().includes(keyword) || 
-        e.nome.toLowerCase().includes(keyword) ||
-        e.id.toLowerCase().includes(keyword)
-      ) || ESPECIALIDADES_DATA[0]
+      ESPECIALIDADES_DATA.find(e => e.nome.toLowerCase().includes('família') || e.slug.includes('fam')) ||
+      ESPECIALIDADES_DATA[1] ||
+      ESPECIALIDADES_DATA[0]
     );
-  };
-
-  let especialidade = input.especialidadeSugeridaId 
-    ? ESPECIALIDADES_DATA.find(e => e.id === input.especialidadeSugeridaId)
-    : undefined;
-
-  if (!especialidade) {
-    if (textoMinusculo.includes('pensão') || textoMinusculo.includes('pensao') || textoMinusculo.includes('guarda') || textoMinusculo.includes('divórcio') || textoMinusculo.includes('divorcio') || textoMinusculo.includes('filho') || textoMinusculo.includes('paternidade') || textoMinusculo.includes('alimentos')) {
-      especialidade = getEspecialidade('familia');
-    } else if (textoMinusculo.includes('inss') || textoMinusculo.includes('aposentadoria') || textoMinusculo.includes('auxílio') || textoMinusculo.includes('auxilio') || textoMinusculo.includes('bpc') || textoMinusculo.includes('loas') || textoMinusculo.includes('incapacidade') || textoMinusculo.includes('rural')) {
-      especialidade = getEspecialidade('previdenciario') || getEspecialidade('civel');
-    } else if (textoMinusculo.includes('preso') || textoMinusculo.includes('delegacia') || textoMinusculo.includes('crime') || textoMinusculo.includes('polícia') || textoMinusculo.includes('policia') || textoMinusculo.includes('audiência') || textoMinusculo.includes('audiencia') || textoMinusculo.includes('custódia') || textoMinusculo.includes('violência') || textoMinusculo.includes('violencia')) {
-      especialidade = getEspecialidade('criminal');
-    } else if (textoMinusculo.includes('remédio') || textoMinusculo.includes('remedio') || textoMinusculo.includes('sus') || textoMinusculo.includes('hospital') || textoMinusculo.includes('uti') || textoMinusculo.includes('prefeitura') || textoMinusculo.includes('saúde') || textoMinusculo.includes('saude')) {
-      especialidade = getEspecialidade('fazenda') || getEspecialidade('civel');
-    } else if (textoMinusculo.includes('demissão') || textoMinusculo.includes('demissao') || textoMinusculo.includes('salário') || textoMinusculo.includes('salario') || textoMinusculo.includes('carteira') || textoMinusculo.includes('patrão') || textoMinusculo.includes('trabalho')) {
-      especialidade = getEspecialidade('trabalh') || getEspecialidade('civel');
-    } else {
-      especialidade = getEspecialidade('civel');
-    }
   }
 
-  // Garantir que especialidade nunca é nula
-  if (!especialidade) {
-    especialidade = ESPECIALIDADES_DATA[0];
+  // 2. Previdenciário / Acidentes do Trabalho (Rural / INSS / Incapacidade)
+  if (t.includes('inss') || t.includes('trator') || t.includes('lavoura') || t.includes('auxílio-doença') || t.includes('auxilio-doenca') || t.includes('auxílio') || t.includes('auxilio') || t.includes('aposentadoria') || t.includes('bpc') || t.includes('loas') || t.includes('incapacidade') || t.includes('rural') || t.includes('acidente')) {
+    return (
+      ESPECIALIDADES_DATA.find(e => e.nome.toLowerCase().includes('acidentes') || e.slug.includes('acidentes')) ||
+      ESPECIALIDADES_DATA.find(e => e.nome.toLowerCase().includes('cível') || e.slug.includes('c-vel') || e.slug.includes('civel')) ||
+      ESPECIALIDADES_DATA[2]
+    );
   }
 
-  let grauVulnerabilidade: 'Baixa' | 'Media' | 'Alta' | 'Extrema' = 'Media';
+  // 3. Saúde Pública / Medicamentos / SUS
+  if (t.includes('remédio') || t.includes('remedio') || t.includes('medicamento') || t.includes('sus') || t.includes('farmácia') || t.includes('farmacia') || t.includes('hospital') || t.includes('uti') || t.includes('prefeitura') || t.includes('saúde') || t.includes('saude') || t.includes('cirurgia')) {
+    return (
+      ESPECIALIDADES_DATA.find(e => e.nome.toLowerCase().includes('cível') || e.slug.includes('c-vel') || e.slug.includes('civel')) ||
+      ESPECIALIDADES_DATA[2]
+    );
+  }
+
+  // 4. Violência Doméstica específica
+  if (t.includes('maria da penha') || t.includes('medida protetiva') || t.includes('agressão conjugal')) {
+    return (
+      ESPECIALIDADES_DATA.find(e => e.nome.toLowerCase().includes('violência doméstica') || e.slug.includes('viol-ncia')) ||
+      ESPECIALIDADES_DATA[3]
+    );
+  }
+
+  // 5. Criminal / Penal Geral
+  if (t.includes('preso') || t.includes('delegacia') || t.includes('flagrante') || t.includes('crime') || t.includes('tráfico') || t.includes('trafico') || t.includes('furto') || t.includes('roubo') || t.includes('audiência de custódia') || t.includes('audiencia de custodia')) {
+    return (
+      ESPECIALIDADES_DATA.find(e => e.id === 'esp-criminal' || e.nome === 'Criminal') ||
+      ESPECIALIDADES_DATA[0]
+    );
+  }
+
+  // 6. Cível Geral / Consumidor
+  return (
+    ESPECIALIDADES_DATA.find(e => e.nome.toLowerCase().includes('cível') || e.slug.includes('c-vel') || e.slug.includes('civel')) ||
+    ESPECIALIDADES_DATA[2] ||
+    ESPECIALIDADES_DATA[0]
+  );
+}
+
+function generateDeterministicPetition(input: GeneratePetitionInput): GeneratedPetitionOutput {
+  const texto = input.descricaoLivre || '';
+  const t = texto.toLowerCase();
+
+  const especialidade = input.especialidadeSugeridaId
+    ? (ESPECIALIDADES_DATA.find(e => e.id === input.especialidadeSugeridaId) || findSpecialtyByText(texto))
+    : findSpecialtyByText(texto);
+
+  let grauVulnerabilidade: 'Baixa' | 'Media' | 'Alta' | 'Extrema' = 'Alta';
   const renda = input.rendaFamiliar || 0;
   const membros = Math.max(1, input.membrosFamilia || 1);
   const rendaPerCapita = renda / membros;
@@ -126,45 +149,77 @@ function generateDeterministicPetition(input: GeneratePetitionInput): GeneratedP
   let fundamentacao = '';
   let pedidos: string[] = [];
 
-  const espNomeLower = especialidade.nome.toLowerCase();
-
-  if (espNomeLower.includes('família') || espNomeLower.includes('familia') || textoMinusculo.includes('pensão') || textoMinusculo.includes('alimentos')) {
-    tituloCaso = 'Requerimento de Ação de Alimentos c/c Tutela Provisória de Urgência';
+  // 1. FAMÍLIA E ALIMENTOS
+  if (
+    t.includes('pensão') || t.includes('pensao') || t.includes('alimentos') || 
+    t.includes('guarda') || t.includes('filho') || t.includes('divórcio') || t.includes('divorcio')
+  ) {
+    tituloCaso = 'Requerimento de Ação de Alimentos c/c Fixação de Alimentos Provisórios de Urgência';
     competenciaVara = `Vara de Família e Sucessões da Comarca de ${input.comarcaNome}/${input.uf}`;
     fundamentacao = 'Art. 227 da Constituição Federal/88; Arts. 1.694 e seguintes do Código Civil; Lei Federal nº 5.478/1968 (Lei de Alimentos); Arts. 98 e 300 do Código de Processo Civil.';
     pedidos = [
-      'Concessão integral dos benefícios da Justiça Gratuita (Art. 98 CPC/15);',
+      'Concessão integral dos benefícios da Assistência Judiciária Gratuita (Art. 98 do CPC/15);',
       'Designação prioritária de Advogado(a) Dativo(a) credenciado(a) pela OAB/PR;',
-      input.possuiUrgencia ? 'Fixação liminar inaudita altera parte de alimentos provisórios em favor dos menores;' : 'Citação da parte requerida para audiência prévia de mediação;',
-      'Intimação do Ilustre Representante do Ministério Público.'
+      input.possuiUrgencia ? 'Fixação liminar inaudita altera parte de alimentos provisórios em favor dos filhos menores;' : 'Citação da parte requerida para audiência preliminar de conciliação;',
+      'Intimação do Ilustre Representante do Ministério Público Estadual (Art. 178, II do CPC).'
     ];
-  } else if (espNomeLower.includes('criminal') || textoMinusculo.includes('crime') || textoMinusculo.includes('preso')) {
-    tituloCaso = 'Requerimento de Defesa Dativa em Matéria Criminal e Garantia Constitucional do Contraditório';
-    competenciaVara = `Vara Criminal e do Tribunal do Júri da Comarca de ${input.comarcaNome}/${input.uf}`;
-    fundamentacao = 'Art. 5º, incisos LV e LXXIV da CF/88; Arts. 261 e 263 do Código de Processo Penal; Lei Estadual nº 18.664/2015.';
+  }
+  // 2. PREVIDENCIÁRIO / INSS / ACIDENTE RURAL
+  else if (
+    t.includes('inss') || t.includes('trator') || t.includes('lavoura') || 
+    t.includes('auxílio-doença') || t.includes('auxilio-doenca') || t.includes('auxílio') || 
+    t.includes('auxilio') || t.includes('aposentadoria') || t.includes('rural') || t.includes('incapacidade')
+  ) {
+    tituloCaso = 'Requerimento de Assistência para Ação Previdenciária de Concessão de Benefício por Incapacidade c/c Tutela de Urgência';
+    competenciaVara = `Vara Cível e da Fazenda Pública (Competência Delegada Federal) da Comarca de ${input.comarcaNome}/${input.uf}`;
+    fundamentacao = 'Art. 201, I da Constituição Federal/88; Arts. 42, 59 e 86 da Lei Federal nº 8.213/1991; Lei nº 10.259/2001; Art. 300 do CPC/15.';
     pedidos = [
-      'Deferimento dos benefícios da Gratuidade Judiciária Integral;',
-      'Nomeação formal de Defensor Dativo com abertura de vista para apresentação de peça defensiva;',
-      'Garantia irrestrita de acesso aos autos e elementos de prova.'
+      'Concessão dos benefícios da Justiça Gratuita em favor do(a) trabalhador(a) hipossuficiente;',
+      'Nomeação formal e habilitação de Defensor Dativo credenciado;',
+      'Determinação imediata de perícia médica judicial especializada;',
+      'Concessão liminar de tutela de urgência para restabelecimento/implantação imediata do benefício previdenciário devido.'
     ];
-  } else if (textoMinusculo.includes('inss') || textoMinusculo.includes('aposentadoria') || textoMinusculo.includes('auxílio') || textoMinusculo.includes('rural')) {
-    tituloCaso = 'Requerimento de Assistência para Ação Previdenciária de Concessão de Benefício c/c Tutela de Urgência';
-    competenciaVara = `Vara Cível / Juizado Especial Federal / Competência Delegada de ${input.comarcaNome}/${input.uf}`;
-    fundamentacao = 'Art. 201, I da Constituição Federal/88; Arts. 42, 59 e 86 da Lei Federal nº 8.213/1991; Lei nº 10.259/2001.';
+  }
+  // 3. SAÚDE PÚBLICA / REMÉDIO SUS / FARMÁCIA ESPECIAL
+  else if (
+    t.includes('remédio') || t.includes('remedio') || t.includes('medicamento') || 
+    t.includes('sus') || t.includes('farmácia') || t.includes('farmacia') || 
+    t.includes('hospital') || t.includes('uti') || t.includes('saúde') || t.includes('saude')
+  ) {
+    tituloCaso = 'Requerimento de Ação de Obrigação de Fazer para Fornecimento de Medicamento de Alto Custo c/c Tutela de Urgência (SUS)';
+    competenciaVara = `Vara da Fazenda Pública da Comarca de ${input.comarcaNome}/${input.uf}`;
+    fundamentacao = 'Arts. 6º e 196 da Constituição Federal/88 (Direito Fundamental à Vida e Saúde); Lei Federal nº 8.080/90 (Lei do SUS); Tema 106 do STJ; Art. 300 do CPC/15.';
     pedidos = [
-      'Deferimento da Justiça Gratuita;',
-      'Designação e aceitação formal de Defensor Dativo;',
-      'Determinação de perícia médica judicial prioritária;',
-      'Concessão de tutela antecipada para implantação imediata do benefício previdenciário devido.'
+      'Deferimento dos benefícios da Justiça Gratuita;',
+      'Designação urgente de Advogado(a) Dativo(a) para ajuizamento da ação cominatória;',
+      'Concessão de tutela de urgência liminar para determinar ao Ente Público o fornecimento ininterrupto do fármaco prescrito, sob pena de bloqueio de verbas públicas;',
+      'Intimação urgente do Ministério Público.'
     ];
-  } else {
+  }
+  // 4. CRIMINAL REAL (CRIME / PRISÃO / DELEGACIA)
+  else if (
+    t.includes('preso') || t.includes('delegacia') || t.includes('flagrante') || 
+    t.includes('crime') || t.includes('tráfico') || t.includes('trafico') || 
+    t.includes('furto') || t.includes('roubo') || t.includes('custódia') || t.includes('custodia')
+  ) {
+    tituloCaso = 'Requerimento de Defesa Dativa em Matéria Criminal e Garantia Constitucional da Ampla Defesa';
+    competenciaVara = `Vara Criminal da Comarca de ${input.comarcaNome}/${input.uf}`;
+    fundamentacao = 'Art. 5º, incisos LV e LXXIV da CF/88; Arts. 261 e 263 do Código de Processo Penal; Lei Estadual do Paraná nº 18.664/2015.';
+    pedidos = [
+      'Deferimento dos benefícios da Gratuidade da Justiça Integral;',
+      'Nomeação formal de Advogado Dativo com abertura de prazo para apresentação de resposta à acusação ou pedido de liberdade provisória;',
+      'Garantia de acesso aos autos e aos meios de prova pertinentes.'
+    ];
+  }
+  // 5. CÍVEL GERAL
+  else {
     tituloCaso = 'Requerimento de Assistência Judiciária Gratuita e Nomeação de Defensor Dativo';
     competenciaVara = `Vara Cível da Comarca de ${input.comarcaNome}/${input.uf}`;
     fundamentacao = 'Art. 5º, LXXIV da CF/88; Arts. 98 a 102 do Código de Processo Civil; Lei Federal nº 1.060/50.';
     pedidos = [
-      'Deferimento da Assistência Judiciária Gratuita;',
-      'Atribuição célere a advogado dativo da comarca ou região;',
-      'Adoção das medidas cabíveis para proteção e tutela do direito violado.'
+      'Deferimento integral da Gratuidade Judiciária;',
+      'Designação formal de Advogado Dativo atuante na comarca;',
+      'Adoção das medidas cabíveis para proteção e tutela do direito invocado.'
     ];
   }
 
@@ -176,6 +231,7 @@ function generateDeterministicPetition(input: GeneratePetitionInput): GeneratedP
 
 **REQUERENTE:** ${input.nomeCidadao.toUpperCase()}, brasileiro(a), hipossuficiente na acepção jurídica do termo, inscrito(a) no CPF sob o nº ${input.cpf || '***.***.***-**'}, domiciliado(a) na Comarca de ${input.comarcaNome} - ${input.uf}.
 **OBJETO:** ${tituloCaso.toUpperCase()}
+**ESPECIALIDADE:** ${especialidade.nome.toUpperCase()}
 **GRAU DE PRIORIDADE:** ${input.possuiUrgencia ? '🔴 URGENTE (Art. 300 CPC)' : '🟡 REGULAR'}
 **GRAU DE VULNERABILIDADE SOCIAL:** ${grauVulnerabilidade.toUpperCase()}
 
