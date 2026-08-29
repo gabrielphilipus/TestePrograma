@@ -28,13 +28,13 @@ async function runFullTestSuite() {
   console.log(`   [Telêmaco Borba - ${telemaco.num_advogados_ativos} advogados]`);
   console.log(`   - É deserto? ${telemaco.is_deserto_juridico ? 'SIM' : 'NÃO'}`);
   console.log(`   - Modo: ${matchTelemaco.modoExpansao} | Raio: ${matchTelemaco.raioFinalKm} km`);
-  console.log(`   - Primeiro Advogado: ${matchTelemaco.matches[0]?.advogado.profile.nome_completo} (${matchTelemaco.matches[0]?.distanciaKm} km)`);
+  console.log(`   - Primeiro Advogado: ${matchTelemaco.matches[0]?.advogado?.profile?.nome_completo} (${matchTelemaco.matches[0]?.distanciaKm} km)`);
   console.log(`   - Status: ${matchTelemaco.modoExpansao === 'local' && matchTelemaco.raioFinalKm === 40 ? '✅ PASSOU (Raio contido em 40km)' : '❌ FALHOU'}\n`);
 
   console.log(`   [Terra Boa - ${terraBoa.num_advogados_ativos} advogado]`);
   console.log(`   - É deserto? ${terraBoa.is_deserto_juridico ? 'SIM' : 'NÃO'}`);
   console.log(`   - Modo: ${matchTerraBoa.modoExpansao} | Raio: ${matchTerraBoa.raioFinalKm} km`);
-  console.log(`   - Primeiro Advogado: ${matchTerraBoa.matches[0]?.advogado.profile.nome_completo} (${matchTerraBoa.matches[0]?.distanciaKm} km)`);
+  console.log(`   - Primeiro Advogado: ${matchTerraBoa.matches[0]?.advogado?.profile?.nome_completo} (${matchTerraBoa.matches[0]?.distanciaKm} km)`);
   console.log(`   - Status: ${matchTerraBoa.modoExpansao === 'deserto_fallback' ? '✅ PASSOU (Expansão de deserto ativada)' : '❌ FALHOU'}\n`);
 
   // TESTE 2: Validação da Certidão Pública Perene
@@ -129,7 +129,7 @@ async function runFullTestSuite() {
     console.log(`   📌 Caso: [${c.nome}]`);
     console.log(`      - Especialidade Classificada: "${peticao.especialidade.nome}"`);
     console.log(`      - Vara Sugerida: ${peticao.competenciaVaraSugerida}`);
-    console.log(`      - Advogado Selecionado: ${match.matches[0]?.advogado.profile.nome_completo} (${match.matches[0]?.distanciaKm} km)`);
+    console.log(`      - Advogado Selecionado: ${match.matches[0]?.advogado?.profile?.nome_completo} (${match.matches[0]?.distanciaKm} km)`);
     console.log(`      - Modo: ${match.modoExpansao} | Raio: ${match.raioFinalKm} km ✅`);
   }
 
