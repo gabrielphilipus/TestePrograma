@@ -165,7 +165,7 @@ export default function HomePage() {
               >
                 {COMARCAS_DATA.map((c) => (
                   <option key={c.id} value={c.id} className="text-slate-900 dark:text-white bg-white dark:bg-navy-900">
-                    {c.nome} ({c.regiao}) — {c.is_deserto_juridico ? 'Deserto Jurídico (Score: ' + c.score_oportunidade + ')' : 'OABs: ' + c.num_advogados_ativos}
+                    {c.nome} ({c.regiao}) — {c.is_deserto_juridico ? `Deserto Jurídico (${c.num_advogados_ativos} advogados)` : `Comarca Coberta (${c.num_advogados_ativos} advogados)`}
                   </option>
                 ))}
               </select>
