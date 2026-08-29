@@ -183,3 +183,53 @@ INSERT INTO public.comarcas (id, nome, uf, regiao, populacao, num_advogados_ativ
 INSERT INTO public.comarcas (id, nome, uf, regiao, populacao, num_advogados_ativos, total_processos_ano, score_oportunidade, latitude, longitude, raio_atendimento_sugerido_km) VALUES ('22222222-2222-2222-2222-000000000161', 'Castro', 'PR', 'Paraná', 73044, 17, 17, 10.0, -24.7911, -50.0119, 80) ON CONFLICT (id) DO NOTHING;
 INSERT INTO public.comarcas (id, nome, uf, regiao, populacao, num_advogados_ativos, total_processos_ano, score_oportunidade, latitude, longitude, raio_atendimento_sugerido_km) VALUES ('22222222-2222-2222-2222-000000000162', 'Mallet', 'PR', 'Paraná', 13418, 3, 3, 6.09, -25.8778, -50.8208, 80) ON CONFLICT (id) DO NOTHING;
 INSERT INTO public.comarcas (id, nome, uf, regiao, populacao, num_advogados_ativos, total_processos_ano, score_oportunidade, latitude, longitude, raio_atendimento_sugerido_km) VALUES ('22222222-2222-2222-2222-000000000163', 'Terra Boa', 'PR', 'Paraná', 17568, 1, 1, 3.96, -23.7719, -52.4436, 80) ON CONFLICT (id) DO NOTHING;
+
+-- 3. Requerimento de Exemplo e Demonstração Pública Oficial (Hash Perene OAB-PR)
+-- Dados auditáveis e verificáveis na rota pública /verificar/e7a3b98c4f1d02e88a912e5c66d741f0a9b2c3d4e5f60718293a4b5c6d7e8f90
+INSERT INTO public.requerimentos (
+    id,
+    protocolo,
+    cidadao_id,
+    advogado_id,
+    comarca_id,
+    especialidade_id,
+    status,
+    prioridade,
+    descricao_relato,
+    renda_familiar_declarada,
+    membros_familia,
+    possui_urgencia,
+    cep_cidadao,
+    titulo_caso,
+    resumo_fatos,
+    requerimento_estruturado_md,
+    fundamentacao_juridica,
+    pedidos_finais,
+    competencia_vara_sugerida,
+    modo_busca_matching,
+    raio_busca_efetivo_km,
+    hash_autenticidade
+) VALUES (
+    '33333333-3333-3333-3333-000000000001',
+    'DAT-2026-8812',
+    '00000000-0000-0000-0000-000000000001',
+    '00000000-0000-0000-0000-000000000002',
+    '22222222-2222-2222-2222-000000000001',
+    '11111111-1111-1111-1111-000000000002',
+    'aceito',
+    'alta',
+    'Preciso de pensão alimentícia para meus 2 filhos menores. O pai não ajuda com as despesas e estou sem emprego formal no momento.',
+    1412.00,
+    3,
+    TRUE,
+    '80010-000',
+    'Ação de Fixação de Alimentos c/c Pedido Liminar de Alimentos Provisórios',
+    'Requerente busca auxílio judiciário gratuito para cobrança e fixação formal de pensão alimentícia em favor dos filhos menores impúberes.',
+    'EXCELENTÍSSIMO(A) SENHOR(A) DOUTOR(A) JUIZ(A) DE DIREITO DA VARA DE FAMÍLIA DA COMARCA DE CURITIBA - PR\n\nAUTUAÇÃO DE ASSISTÊNCIA JUDICIÁRIA DATIVA\nPROTOCOLO OFICIAL: DAT-2026-8812\nCERTIFICAÇÃO DIGITAL: OAB-PR / SISTEMA MATCH JURÍDICO\n\nI. DA QUALIFICAÇÃO DA PARTE REQUERENTE\nJULIANA MENDES DE CASTRO, brasileira, solteira, autônoma, portadora do CPF nº 458.912.879-04, residente e domiciliada na Comarca de Curitiba/PR, vem, por intermédio da Defensora Dativa designada DRA. CAMILA VASCONCELOS DE OLIVEIRA (OAB/PR 94.812), propor o presente REQUERIMENTO DE FIXAÇÃO DE ALIMENTOS COM PEDIDO DE ALIMENTOS PROVISÓRIOS.\n\nII. DOS PEDIDOS E REQUERIMENTOS\na) Concessão da Gratuidade de Justiça;\nb) Fixação liminar de ALIMENTOS PROVISÓRIOS;\nc) Designação de audiência de mediação e citação do alimentante;\nd) Procedência dos pedidos.\n\nCuritiba/PR, 29 de Agosto de 2026.\nDocumento de Demonstração Oficial Autuado e Certificado Eletronicamente via Match Jurídico.',
+    'Arts. 1.694 e 1.695 do Código Civil; Lei nº 5.478/1968; Art. 227 da CF/88; Art. 98 do CPC.',
+    ARRAY['Gratuidade de justiça', 'Fixação de alimentos provisórios', 'Citação do alimentante', 'Procedência do pleito alimentar'],
+    'Vara de Família e Sucessões',
+    'proximidade_sede',
+    35,
+    'e7a3b98c4f1d02e88a912e5c66d741f0a9b2c3d4e5f60718293a4b5c6d7e8f90'
+) ON CONFLICT (hash_autenticidade) DO NOTHING;
