@@ -134,10 +134,17 @@ export default function VerificarDocumentoPage() {
                 <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                 <span>Autenticidade e Rastreabilidade Certificadas</span>
               </div>
-              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white print:text-black mt-1">
-                Certidão de Requerimento Dativo
-              </h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400 print:text-slate-600">
+              <div className="flex flex-wrap items-center gap-2 mt-1">
+                <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white print:text-black">
+                  Certidão de Requerimento Dativo
+                </h1>
+                {requerimento.hash_autenticidade.startsWith('e7a3b98c') && (
+                  <span className="text-[10px] font-bold text-blue-700 dark:text-cyan-300 bg-blue-50 dark:bg-blue-950/60 px-2.5 py-0.5 rounded-full border border-blue-200 dark:border-cyan-500/30">
+                    Exemplo de Demonstração Pública • OAB/PR
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 print:text-slate-600 mt-0.5">
                 Sistema Oficial de Assistência Judiciária • Match Jurídico
               </p>
             </div>
