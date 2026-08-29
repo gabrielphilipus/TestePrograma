@@ -103,7 +103,7 @@ export const ESPECIALIDADES_DATA: Especialidade[] = [
 
 export const COMARCAS_DATA: Comarca[] = [
   {
-    "id": "com-goioer",
+    "id": "com-goioere",
     "nome": "Goioerê",
     "uf": "PR",
     "regiao": "Paraná",
@@ -145,7 +145,7 @@ export const COMARCAS_DATA: Comarca[] = [
     "raio_atendimento_sugerido_km": 35
   },
   {
-    "id": "com-tel-maco-borba",
+    "id": "com-telemaco-borba",
     "nome": "Telêmaco Borba",
     "uf": "PR",
     "regiao": "Paraná",
@@ -369,7 +369,7 @@ export const COMARCAS_DATA: Comarca[] = [
     "raio_atendimento_sugerido_km": 35
   },
   {
-    "id": "com-maring",
+    "id": "com-maringa",
     "nome": "Maringá",
     "uf": "PR",
     "regiao": "Paraná",
@@ -2203,11 +2203,11 @@ export const COMARCAS_DATA: Comarca[] = [
     "raio_atendimento_sugerido_km": 35
   },
   {
-    "id": "com-pontal-do-paran",
+    "id": "com-pontal-do-parana",
     "nome": "Pontal Do Paraná",
     "uf": "PR",
     "regiao": "Paraná",
-    "populacao": 12000,
+    "populacao": 30425,
     "num_advogados_ativos": 59,
     "total_processos_ano": 60,
     "score_oportunidade": 20.7,
@@ -2221,7 +2221,7 @@ export const COMARCAS_DATA: Comarca[] = [
     "nome": "Congonhinhas",
     "uf": "PR",
     "regiao": "Paraná",
-    "populacao": 12000,
+    "populacao": 8857,
     "num_advogados_ativos": 90,
     "total_processos_ano": 90,
     "score_oportunidade": 20.51,
@@ -2235,7 +2235,7 @@ export const COMARCAS_DATA: Comarca[] = [
     "nome": "Antonina",
     "uf": "PR",
     "regiao": "Paraná",
-    "populacao": 12000,
+    "populacao": 18891,
     "num_advogados_ativos": 75,
     "total_processos_ano": 76,
     "score_oportunidade": 17.55,
@@ -2245,11 +2245,11 @@ export const COMARCAS_DATA: Comarca[] = [
     "raio_atendimento_sugerido_km": 35
   },
   {
-    "id": "com-corn-lio-proc-pio",
+    "id": "com-cornelio-procopio",
     "nome": "Cornélio Procópio",
     "uf": "PR",
     "regiao": "Paraná",
-    "populacao": 12000,
+    "populacao": 45206,
     "num_advogados_ativos": 86,
     "total_processos_ano": 86,
     "score_oportunidade": 16.27,
@@ -2263,7 +2263,7 @@ export const COMARCAS_DATA: Comarca[] = [
     "nome": "Matinhos",
     "uf": "PR",
     "regiao": "Paraná",
-    "populacao": 12000,
+    "populacao": 39259,
     "num_advogados_ativos": 50,
     "total_processos_ano": 50,
     "score_oportunidade": 16.03,
@@ -2277,7 +2277,7 @@ export const COMARCAS_DATA: Comarca[] = [
     "nome": "Guaratuba",
     "uf": "PR",
     "regiao": "Paraná",
-    "populacao": 12000,
+    "populacao": 42062,
     "num_advogados_ativos": 84,
     "total_processos_ano": 84,
     "score_oportunidade": 15.93,
@@ -2287,11 +2287,11 @@ export const COMARCAS_DATA: Comarca[] = [
     "raio_atendimento_sugerido_km": 35
   },
   {
-    "id": "com-curi-va",
+    "id": "com-curiuva",
     "nome": "Curiúva",
     "uf": "PR",
     "regiao": "Paraná",
-    "populacao": 12000,
+    "populacao": 13923,
     "num_advogados_ativos": 89,
     "total_processos_ano": 89,
     "score_oportunidade": 14.82,
@@ -2305,7 +2305,7 @@ export const COMARCAS_DATA: Comarca[] = [
     "nome": "Palmital",
     "uf": "PR",
     "regiao": "Paraná",
-    "populacao": 12000,
+    "populacao": 13003,
     "num_advogados_ativos": 70,
     "total_processos_ano": 70,
     "score_oportunidade": 13.47,
@@ -2347,7 +2347,7 @@ export const COMARCAS_DATA: Comarca[] = [
     "nome": "Colorado",
     "uf": "PR",
     "regiao": "Paraná",
-    "populacao": 12000,
+    "populacao": 22896,
     "num_advogados_ativos": 57,
     "total_processos_ano": 58,
     "score_oportunidade": 9.77,
@@ -2550,4 +2550,117 @@ export const MOCK_ADVOGADOS: AdvogadoDativo[] = [
   }
 ];
 
-export const MOCK_REQUERIMENTOS: Requerimento[] = [];
+export const MOCK_REQUERIMENTOS: Requerimento[] = [
+  {
+    id: 'req-exemplo-publico',
+    protocolo: 'DAT-2026-8812',
+    cidadao_id: 'prof-cid-demo',
+    cidadao: {
+      id: 'prof-cid-demo',
+      role: 'cidadao',
+      nome_completo: 'Juliana Mendes de Castro',
+      cpf: '458.912.879-04',
+      telefone: '(42) 99876-1234',
+      email: 'juliana.castro@gmail.com',
+      govbr_verified: true,
+      govbr_nivel: 'OURO',
+      created_at: '2026-08-20T10:00:00Z',
+      updated_at: '2026-08-20T10:00:00Z',
+    },
+    comarca_id: 'com-curitiba',
+    comarca: {
+      id: 'com-curitiba',
+      nome: 'Curitiba',
+      uf: 'PR',
+      regiao: 'Paraná',
+      populacao: 1773733,
+      num_advogados_ativos: 926,
+      total_processos_ano: 934,
+      score_oportunidade: 75.02,
+      is_deserto_juridico: false,
+      latitude: -25.4284,
+      longitude: -49.2733,
+      raio_atendimento_sugerido_km: 35
+    },
+    especialidade_id: 'esp-fam-lia-e-sucess-es',
+    especialidade: {
+      id: 'esp-fam-lia-e-sucess-es',
+      nome: 'Família e Sucessões',
+      slug: 'familia',
+      icone: 'Users',
+      descricao: 'Atendimento e defesa dativa especializada em Família e Sucessões.'
+    },
+    advogado_id: 'adv-01',
+    advogado: {
+      id: 'adv-01',
+      profile_id: 'prof-adv-01',
+      numero_oab: '94.812',
+      uf_oab: 'PR',
+      comarca_sede_id: 'com-maringa',
+      raio_maximo_km: 90,
+      disponivel: true,
+      casos_em_andamento: 1,
+      limite_casos_simultaneos: 8,
+      atende_remoto: true,
+      score_reputacao: 4.95,
+      bio: 'Advogada especialista em Família/Sucessões e Cível com atuação dativa destacada no Paraná.',
+      profile: {
+        id: 'prof-adv-01',
+        role: 'advogado',
+        nome_completo: 'Dra. Camila Vasconcelos de Oliveira',
+        cpf: '312.492.109-88',
+        telefone: '(44) 99124-8833',
+        email: 'camila.vasconcelos.adv@oabpr.org.br',
+        avatar_url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
+        govbr_verified: true,
+        govbr_nivel: 'OURO',
+        created_at: '2025-01-10T10:00:00Z',
+        updated_at: '2026-08-20T10:00:00Z'
+      }
+    },
+    status: 'aceito',
+    prioridade: 'alta',
+    descricao_relato: 'Preciso de pensão alimentícia para meus 2 filhos menores. O pai não ajuda com as despesas e estou sem emprego formal no momento.',
+    renda_familiar_declarada: 1412,
+    membros_familia: 3,
+    possui_urgencia: true,
+    cep_cidadao: '80010-000',
+    titulo_caso: 'Ação de Fixação de Alimentos c/c Pedido Liminar de Alimentos Provisórios',
+    resumo_fatos: 'Requerente busca auxílio judiciário gratuito para cobrança e fixação formal de pensão alimentícia em favor dos filhos menores impúberes.',
+    requerimento_estruturado_md: `EXCELENTÍSSIMO(A) SENHOR(A) DOUTOR(A) JUIZ(A) DE DIREITO DA VARA DE FAMÍLIA DA COMARCA DE CURITIBA - PR
+
+AUTUAÇÃO DE ASSISTÊNCIA JUDICIÁRIA DATIVA
+PROTOCOLO OFICIAL: DAT-2026-8812
+CERTIFICAÇÃO DIGITAL: OAB-PR / SISTEMA MATCH JURÍDICO
+
+I. DA QUALIFICAÇÃO DA PARTE REQUERENTE
+JULIANA MENDES DE CASTRO, brasileira, solteira, autônoma, portadora do CPF nº 458.912.879-04, residente e domiciliada na Comarca de Curitiba/PR, vem, por intermédio da Defensora Dativa designada DRA. CAMILA VASCONCELOS DE OLIVEIRA (OAB/PR 94.812), propor o presente:
+
+REQUERIMENTO DE FIXAÇÃO DE ALIMENTOS COM PEDIDO DE ALIMENTOS PROVISÓRIOS
+
+II. DOS FATOS
+A requerente é genitora e detentora da guarda de fato de dois filhos menores impúberes. O genitor das crianças afastou-se do lar e cessou a assistência material e financeira regular aos infantes, sobrecarregando integralmente a genitora, cuja renda mensal é de 1 (um) salário-mínimo.
+
+III. DO DIREITO E DA FUNDAMENTAÇÃO
+Consoante prescrevem os arts. 1.694 e 1.695 do Código Civil c/c o art. 4º da Lei nº 5.478/68 (Lei de Alimentos) e o art. 227 da Constituição Federal, o dever de sustento e assistência aos filhos menores é obrigação inafastável de ambos os genitores, devendo ser fixados alimentos provisórios liminarmente.
+
+IV. DOS PEDIDOS E REQUERIMENTOS
+Diante do exposto, requer-se:
+a) A concessão integral dos benefícios da Gratuidade de Justiça (Art. 98 do CPC);
+b) A fixação liminar de ALIMENTOS PROVISÓRIOS no importe de 30% dos rendimentos ou 50% do salário-mínimo;
+c) A designação de audiência de mediação/conciliação e regular citação do alimentante;
+d) A intimação do Ministério Público Estadual;
+e) A procedência integral dos pedidos.
+
+Curitiba/PR, 29 de Agosto de 2026.
+Documento Autuado e Certificado Eletronicamente via Match Jurídico.`,
+    fundamentacao_juridica: 'Arts. 1.694 e 1.695 do Código Civil; Lei nº 5.478/1968; Art. 227 da CF/88; Art. 98 do CPC.',
+    pedidos_finais: ['Gratuidade de justiça', 'Fixação de alimentos provisórios', 'Citação do alimentante', 'Procedência do pleito alimentar'],
+    competencia_vara_sugerida: 'Vara de Família e Sucessões',
+    modo_busca_matching: 'proximidade_sede',
+    raio_busca_efetivo_km: 35,
+    hash_autenticidade: 'e7a3b98c4f1d02e88a912e5c66d741f0a9b2c3d4e5f60718293a4b5c6d7e8f90',
+    created_at: '2026-08-20T14:30:00.000Z',
+    updated_at: '2026-08-20T15:00:00.000Z',
+  }
+];

@@ -13,7 +13,11 @@ import {
   Loader2, 
   Send,
   AlertCircle,
-  HelpCircle
+  HelpCircle,
+  Mic,
+  MicOff,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 import { COMARCAS_DATA, ESPECIALIDADES_DATA, MOCK_ADVOGADOS } from '@/lib/data/mock-seed-data';
 import { generateStructuredPetition, GeneratedPetitionOutput } from '@/lib/ai/petition-generator';
@@ -21,13 +25,14 @@ import { findMatchingAdvogados } from '@/lib/matching/engine';
 import { generateProtocolHash } from '@/lib/qr/generator';
 import { saveRequerimento, getCurrentUserProfile } from '@/lib/storage/mock-store';
 import { Requerimento } from '@/types/database';
+import { useTextToSpeech, useSpeechRecognition } from '@/hooks/use-speech';
 
 export default function NovoCasoPage() {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
 
   // Formulário State
-  const [comarcaId, setComarcaId] = useState(COMARCAS_DATA[0].id); // Reserva
+  const [comarcaId, setComarcaId] = useState(COMARCAS_DATA[0].id); // Goioerê / Reserva
   const [rendaFamiliar, setRendaFamiliar] = useState('1200');
   const [membrosFamilia, setMembrosFamilia] = useState('3');
   const [possuiUrgencia, setPossuiUrgencia] = useState(false);
@@ -39,7 +44,43 @@ export default function NovoCasoPage() {
   const [aiResult, setAiResult] = useState<GeneratedPetitionOutput | null>(null);
   const [generatedRequerimento, setGeneratedRequerimento] = useState<Requerimento | null>(null);
 
+  // Acessibilidade: Web Speech TTS e STT
+  const { speak, stop: stopSpeaking, isSpeaking } = useTextToSpeech();
+  const { startListening, stopListening, isListening, isSupported: isSttSupported } = useSpeechRecognition((text) => {
+    setDescricaoLivre((prev) => {
+      const base = prev.trim();
+      return base ? `${base} ${text}` : text;
+    });
+  });
+
   const selectedComarca = COMARCAS_DATA.find(c => c.id === comarcaId) || COMARCAS_DATA[0];
+
+  // Alternar Ditado por Voz
+  const toggleVoiceInput = () => {
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  };
+
+  // Alternar Leitura do Relato
+  const toggleReadRelato = () => {
+    if (isSpeaking) {
+      stopSpeaking();
+    } else {
+      speak(descricaoLivre || 'Nenhum relato digitado ainda. Escreva ou dite o que está acontecendo.');
+    }
+  };
+
+  // Alternar Leitura da Minuta
+  const toggleReadMinuta = () => {
+    if (isSpeaking) {
+      stopSpeaking();
+    } else if (aiResult) {
+      speak(`Título do caso: ${aiResult.tituloCaso}. Vara sugerida: ${aiResult.competenciaVaraSugerida}. Fundamentação: ${aiResult.fundamentacaoJuridica}. ${aiResult.requerimentoEstruturadoMd}`);
+    }
+  };
 
   // Exemplos rápidos para demonstração no pitch
   const handleQuickFill = (tipo: 'pensao' | 'inss' | 'remedio') => {
@@ -67,6 +108,8 @@ export default function NovoCasoPage() {
   // Gerar Petição com IA
   const handleGeneratePetition = async () => {
     if (!descricaoLivre.trim()) return;
+    if (isSpeaking) stopSpeaking();
+    if (isListening) stopListening();
     setIsGeneratingAi(true);
 
     try {
@@ -120,6 +163,7 @@ ${descricaoLivre}
   // Confirmar e Enviar para Matching
   const handleFinalSubmit = () => {
     if (!aiResult) return;
+    if (isSpeaking) stopSpeaking();
 
     const userProfile = getCurrentUserProfile();
     const matching = findMatchingAdvogados({
@@ -168,57 +212,58 @@ ${descricaoLivre}
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
       
-      {/* Barra de Progresso */}
-      <div className="mb-8">
+      {/* Barra de Progresso com Acessibilidade */}
+      <nav aria-label="Progresso do Requerimento" className="mb-8">
         <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
           <span className={step >= 1 ? 'text-blue-600 dark:text-cyan-400 font-extrabold' : ''}>1. Dados Básicos</span>
           <span className={step >= 2 ? 'text-blue-600 dark:text-cyan-400 font-extrabold' : ''}>2. Relato Livre</span>
           <span className={step >= 3 ? 'text-blue-600 dark:text-cyan-400 font-extrabold' : ''}>3. IA Jurídica</span>
           <span className={step >= 4 ? 'text-blue-600 dark:text-cyan-400 font-extrabold' : ''}>4. Protocolo & Match</span>
         </div>
-        <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+        <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden" role="progressbar" aria-valuenow={step} aria-valuemin={1} aria-valuemax={4}>
           <div 
             className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 h-full transition-all duration-500"
             style={{ width: `${(step / 4) * 100}%` }}
           ></div>
         </div>
-      </div>
+      </nav>
 
       {/* ETAPA 1: Comarca e Perfil */}
       {step === 1 && (
-        <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-blue-500/20 shadow-xl space-y-6">
+        <section aria-labelledby="etapa1-titulo" className="glass-panel rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-blue-500/20 shadow-xl space-y-6">
           <div>
             <div className="flex items-center space-x-2 text-xs font-bold text-blue-600 dark:text-cyan-400 uppercase tracking-wider mb-1">
               <MapPin className="w-4 h-4" />
-              <span>Etapa 1 de 4</span>
+              <span>Etapa 1 de 4 • Local e Família</span>
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Onde o problema aconteceu?</h2>
-            <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-              A comarca é fundamental para definirmos a competência do tribunal e acionarmos advogados dativos da região.
+            <h2 id="etapa1-titulo" className="text-2xl font-bold text-slate-900 dark:text-white">Onde o problema aconteceu?</h2>
+            <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+              A comarca é a cidade responsável pela Justiça na sua região e nos ajuda a encontrar o advogado dativo mais próximo.
             </p>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+              <label htmlFor="select-comarca" className="block text-xs font-semibold text-slate-800 dark:text-slate-200 mb-1.5">
                 Comarca / Município do Paraná:
               </label>
               <select
+                id="select-comarca"
                 value={comarcaId}
                 onChange={(e) => setComarcaId(e.target.value)}
-                className="w-full bg-white dark:bg-navy-900 border border-slate-300 dark:border-blue-700/50 rounded-xl px-4 py-3 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-blue-500 dark:focus:border-cyan-400 shadow-sm"
+                className="w-full bg-white dark:bg-navy-900 border border-slate-300 dark:border-blue-700/50 rounded-xl px-4 py-3 text-slate-900 dark:text-white text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-cyan-400 shadow-sm"
               >
                 {COMARCAS_DATA.map((c) => (
                   <option key={c.id} value={c.id} className="text-slate-900 dark:text-white bg-white dark:bg-navy-900">
-                    {c.nome} ({c.regiao}) — {c.is_deserto_juridico ? 'Deserto Jurídico (Carência de Advogados)' : 'Comarca Coberta'}
+                    {c.nome} ({c.regiao}) — {c.is_deserto_juridico ? 'Deserto Jurídico (≤25 advogados locais)' : `Comarca Coberta (${c.num_advogados_ativos} advogados)`}
                   </option>
                 ))}
               </select>
               {selectedComarca.is_deserto_juridico && (
-                <p className="text-[11px] text-amber-600 dark:text-amber-400 mt-1.5 flex items-center space-x-1">
-                  <AlertCircle className="w-3.5 h-3.5" />
+                <p className="text-[11px] text-amber-700 dark:text-amber-300 mt-1.5 flex items-center space-x-1.5 font-medium">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-amber-500" />
                   <span>
-                    Esta comarca possui carência crítica de defensores (Score de Oportunidade {selectedComarca.score_oportunidade}). O sistema ativará a busca com raio expandido automaticamente.
+                    Esta comarca é classificada como Deserto Jurídico ({selectedComarca.num_advogados_ativos} advogados ativos locais). O sistema ativará a busca com raio ampliado automaticamente.
                   </span>
                 </p>
               )}
@@ -226,41 +271,44 @@ ${descricaoLivre}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                <label htmlFor="input-renda" className="block text-xs font-semibold text-slate-800 dark:text-slate-200 mb-1.5">
                   Renda Familiar Mensal (R$):
                 </label>
                 <input
+                  id="input-renda"
                   type="number"
                   value={rendaFamiliar}
                   onChange={(e) => setRendaFamiliar(e.target.value)}
                   placeholder="Ex: 1200"
-                  className="w-full bg-white dark:bg-navy-900 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-blue-500 dark:focus:border-cyan-400 shadow-sm"
+                  className="w-full bg-white dark:bg-navy-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-cyan-400 shadow-sm"
                 />
-                <span className="text-[10px] text-slate-500 dark:text-slate-400">Critério para gratuidade de justiça</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400">Usado para comprovar direito ao atendimento 100% gratuito</span>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                  Membros da Família que dependem dessa renda:
+                <label htmlFor="input-membros" className="block text-xs font-semibold text-slate-800 dark:text-slate-200 mb-1.5">
+                  Quantas pessoas vivem com essa renda:
                 </label>
                 <input
+                  id="input-membros"
                   type="number"
                   value={membrosFamilia}
                   onChange={(e) => setMembrosFamilia(e.target.value)}
                   min="1"
-                  className="w-full bg-white dark:bg-navy-900 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-blue-500 dark:focus:border-cyan-400 shadow-sm"
+                  className="w-full bg-white dark:bg-navy-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-cyan-400 shadow-sm"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">CEP:</label>
+              <label htmlFor="input-cep" className="block text-xs font-semibold text-slate-800 dark:text-slate-200 mb-1.5">CEP do seu endereço:</label>
               <input
+                id="input-cep"
                 type="text"
                 value={cep}
                 onChange={(e) => setCep(e.target.value)}
                 placeholder="00000-000"
-                className="w-full max-w-xs bg-white dark:bg-navy-900 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-blue-500 dark:focus:border-cyan-400 shadow-sm"
+                className="w-full max-w-xs bg-white dark:bg-navy-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-cyan-400 shadow-sm"
               />
             </div>
           </div>
@@ -269,27 +317,28 @@ ${descricaoLivre}
             <button
               type="button"
               onClick={() => setStep(2)}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold text-sm shadow-lg flex items-center space-x-2"
+              className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold text-sm shadow-lg flex items-center space-x-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+              aria-label="Avançar para a etapa de relato do caso"
             >
               <span>Avançar para o Relato</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
-        </div>
+        </section>
       )}
 
-      {/* ETAPA 2: Relato em Linguagem Simples */}
+      {/* ETAPA 2: Relato em Linguagem Simples com Voz e Ditado */}
       {step === 2 && (
-        <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-blue-500/20 shadow-xl space-y-6">
+        <section aria-labelledby="etapa2-titulo" className="glass-panel rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-blue-500/20 shadow-xl space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <div className="flex items-center space-x-2 text-xs font-bold text-blue-600 dark:text-cyan-400 uppercase tracking-wider mb-1">
                 <Sparkles className="w-4 h-4" />
-                <span>Etapa 2 de 4</span>
+                <span>Etapa 2 de 4 • Seu Relato</span>
               </div>
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Conte o que está acontecendo</h2>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                Escreva livremente com suas palavras. Nossa IA Jurídica organizará os fatos e artigos da lei.
+              <h2 id="etapa2-titulo" className="text-2xl font-bold text-slate-900 dark:text-white">Conte o que está acontecendo</h2>
+              <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">
+                Escreva ou dite com suas próprias palavras. Nossa IA Jurídica organizará tudo nos termos da lei.
               </p>
             </div>
 
@@ -299,34 +348,82 @@ ${descricaoLivre}
               <button
                 type="button"
                 onClick={() => handleQuickFill('pensao')}
-                className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-cyan-300 text-xs border border-blue-200 dark:border-blue-500/30 hover:bg-blue-100 dark:hover:bg-blue-500/20"
+                className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-cyan-300 text-xs border border-blue-200 dark:border-blue-500/30 hover:bg-blue-100 dark:hover:bg-blue-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 Pensão / Guarda
               </button>
               <button
                 type="button"
                 onClick={() => handleQuickFill('inss')}
-                className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-cyan-300 text-xs border border-blue-200 dark:border-blue-500/30 hover:bg-blue-100 dark:hover:bg-blue-500/20"
+                className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-cyan-300 text-xs border border-blue-200 dark:border-blue-500/30 hover:bg-blue-100 dark:hover:bg-blue-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 INSS Rural
               </button>
               <button
                 type="button"
                 onClick={() => handleQuickFill('remedio')}
-                className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-cyan-300 text-xs border border-blue-200 dark:border-blue-500/30 hover:bg-blue-100 dark:hover:bg-blue-500/20"
+                className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-cyan-300 text-xs border border-blue-200 dark:border-blue-500/30 hover:bg-blue-100 dark:hover:bg-blue-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 Remédio SUS
               </button>
             </div>
           </div>
 
+          {/* Barra de Ferramentas de Acessibilidade (Voz e Leitura) */}
+          <div className="flex flex-wrap items-center gap-2 p-2.5 bg-slate-100 dark:bg-navy-950/80 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 ml-1">
+              Ferramentas de Inclusão e Voz:
+            </span>
+
+            {/* Botão Ditar Relato (STT) */}
+            <button
+              type="button"
+              onClick={toggleVoiceInput}
+              aria-label={isListening ? 'Parar gravação de voz' : 'Ditar relato por voz usando microfone'}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                isListening 
+                  ? 'bg-red-600 text-white animate-pulse shadow-md shadow-red-500/30' 
+                  : 'bg-white dark:bg-navy-800 text-slate-800 dark:text-slate-200 hover:bg-slate-50 border border-slate-300 dark:border-slate-700'
+              }`}
+            >
+              {isListening ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" />}
+              <span>{isListening ? 'Gravando... Clique para Parar' : 'Ditar por Voz'}</span>
+            </button>
+
+            {/* Botão Ouvir Relato (TTS) */}
+            <button
+              type="button"
+              onClick={toggleReadRelato}
+              aria-label={isSpeaking ? 'Parar leitura em voz alta' : 'Ouvir relato digitado em voz alta'}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                isSpeaking 
+                  ? 'bg-blue-600 text-white shadow-md' 
+                  : 'bg-white dark:bg-navy-800 text-slate-800 dark:text-slate-200 hover:bg-slate-50 border border-slate-300 dark:border-slate-700'
+              }`}
+            >
+              {isSpeaking ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />}
+              <span>{isSpeaking ? 'Parar Áudio' : 'Ouvir Relato'}</span>
+            </button>
+
+            {isListening && (
+              <span className="text-[11px] text-red-600 dark:text-red-400 font-medium animate-pulse ml-auto flex items-center space-x-1">
+                <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                <span>Ouvindo sua voz... Fale normalmente</span>
+              </span>
+            )}
+          </div>
+
           <div>
+            <label htmlFor="textarea-relato" className="sr-only">
+              Descreva sua situação
+            </label>
             <textarea
+              id="textarea-relato"
               rows={6}
               value={descricaoLivre}
               onChange={(e) => setDescricaoLivre(e.target.value)}
               placeholder="Exemplo: Preciso que o pai dos meus filhos pague a pensão que combinamos verbalmente. Estou desempregada e não consigo sustentar as crianças sozinha..."
-              className="w-full bg-white dark:bg-navy-900 border border-slate-300 dark:border-blue-700/40 rounded-2xl p-4 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-blue-500 dark:focus:border-cyan-400 transition-colors shadow-sm"
+              className="w-full bg-white dark:bg-navy-900 border border-slate-300 dark:border-blue-700/40 rounded-2xl p-4 text-slate-900 dark:text-white text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-cyan-400 transition-colors shadow-sm"
             />
           </div>
 
@@ -334,15 +431,18 @@ ${descricaoLivre}
             <div className="flex items-center space-x-3">
               <ShieldAlert className={`w-5 h-5 ${possuiUrgencia ? 'text-red-500' : 'text-slate-400'}`} />
               <div>
-                <h4 className="text-xs font-bold text-slate-900 dark:text-white">Este caso tem perigo imediato ou urgência?</h4>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">Ex: risco à saúde, corte de alimentos, perda de prazo processual.</p>
+                <label htmlFor="checkbox-urgencia" className="text-xs font-bold text-slate-900 dark:text-white block cursor-pointer">
+                  Este caso tem perigo imediato ou urgência?
+                </label>
+                <p className="text-[11px] text-slate-600 dark:text-slate-300">Ex: risco à saúde, corte de alimentos, perda de prazo processual.</p>
               </div>
             </div>
             <input
+              id="checkbox-urgencia"
               type="checkbox"
               checked={possuiUrgencia}
               onChange={(e) => setPossuiUrgencia(e.target.checked)}
-              className="w-5 h-5 rounded accent-blue-600 dark:accent-cyan-400 cursor-pointer"
+              className="w-5 h-5 rounded accent-blue-600 dark:accent-cyan-400 cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500"
             />
           </div>
 
@@ -350,7 +450,7 @@ ${descricaoLivre}
             <button
               type="button"
               onClick={() => setStep(1)}
-              className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs border border-slate-200 dark:border-slate-700"
+              className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs border border-slate-200 dark:border-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               ← Voltar
             </button>
@@ -359,7 +459,8 @@ ${descricaoLivre}
               type="button"
               disabled={!descricaoLivre.trim() || isGeneratingAi}
               onClick={handleGeneratePetition}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold text-sm shadow-lg flex items-center space-x-2 disabled:opacity-50"
+              className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold text-sm shadow-lg flex items-center space-x-2 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+              aria-label="Estruturar petição inicial com inteligência artificial"
             >
               {isGeneratingAi ? (
                 <>
@@ -374,23 +475,40 @@ ${descricaoLivre}
               )}
             </button>
           </div>
-        </div>
+        </section>
       )}
 
       {/* ETAPA 3: Revisão da Petição Estruturada pela IA */}
       {step === 3 && aiResult && (
-        <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-blue-200 dark:border-cyan-500/30 shadow-xl space-y-6">
-          <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
+        <section aria-labelledby="etapa3-titulo" className="glass-panel rounded-3xl p-6 sm:p-8 border border-blue-200 dark:border-cyan-500/30 shadow-xl space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
             <div>
               <div className="flex items-center space-x-2 text-xs font-bold text-blue-600 dark:text-cyan-400 uppercase tracking-wider mb-1">
                 <Sparkles className="w-4 h-4" />
                 <span>Petição Estruturada com Sucesso pela IA</span>
               </div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">{aiResult.tituloCaso}</h2>
+              <h2 id="etapa3-titulo" className="text-xl font-bold text-slate-900 dark:text-white">{aiResult.tituloCaso}</h2>
             </div>
-            <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-cyan-400/30 text-blue-800 dark:text-cyan-300 text-xs font-bold">
-              {aiResult.especialidade.nome}
-            </span>
+            
+            <div className="flex items-center space-x-2">
+              <button
+                type="button"
+                onClick={toggleReadMinuta}
+                aria-label={isSpeaking ? 'Parar leitura em voz alta da petição' : 'Ouvir toda a petição em voz alta'}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                  isSpeaking 
+                    ? 'bg-blue-600 text-white shadow-md' 
+                    : 'bg-white dark:bg-navy-800 text-slate-800 dark:text-slate-200 hover:bg-slate-50 border border-slate-300 dark:border-slate-700'
+                }`}
+              >
+                {isSpeaking ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />}
+                <span>{isSpeaking ? 'Parar Leitura' : 'Ouvir Minuta Completa'}</span>
+              </button>
+
+              <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-cyan-400/30 text-blue-800 dark:text-cyan-300 text-xs font-bold">
+                {aiResult.especialidade.nome}
+              </span>
+            </div>
           </div>
 
           {/* Destaques Rápidos da Peça */}
@@ -413,10 +531,14 @@ ${descricaoLivre}
 
           {/* Preview do Documento Markdown */}
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">
+            <label className="block text-xs font-semibold text-slate-800 dark:text-slate-200 mb-2">
               Visualização da Minuta do Requerimento Inicial:
             </label>
-            <div className="p-5 rounded-2xl bg-white dark:bg-navy-900/90 border border-slate-200 dark:border-slate-800 max-h-80 overflow-y-auto font-mono text-xs text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-wrap shadow-inner">
+            <div 
+              tabIndex={0}
+              aria-label="Texto integral da petição inicial formatada"
+              className="p-5 rounded-2xl bg-white dark:bg-navy-900/90 border border-slate-200 dark:border-slate-800 max-h-80 overflow-y-auto font-mono text-xs text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-wrap shadow-inner focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            >
               {aiResult.requerimentoEstruturadoMd}
             </div>
           </div>
@@ -434,7 +556,7 @@ ${descricaoLivre}
             <button
               type="button"
               onClick={() => setStep(2)}
-              className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs border border-slate-200 dark:border-slate-700"
+              className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs border border-slate-200 dark:border-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               ← Editar Relato
             </button>
@@ -442,13 +564,14 @@ ${descricaoLivre}
             <button
               type="button"
               onClick={handleFinalSubmit}
-              className="px-8 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-700 hover:to-cyan-700 text-white font-extrabold text-sm shadow-xl flex items-center space-x-2"
+              className="px-8 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-700 hover:to-cyan-700 text-white font-extrabold text-sm shadow-xl flex items-center space-x-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+              aria-label="Confirmar envio do caso e iniciar matching de advogados dativos"
             >
               <Send className="w-4 h-4" />
               <span>Confirmar & Iniciar Matching de Dativos →</span>
             </button>
           </div>
-        </div>
+        </section>
       )}
 
       {/* ETAPA 4: Sucesso, Protocolo e Fila de Matching */}

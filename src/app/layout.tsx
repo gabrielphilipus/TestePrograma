@@ -3,6 +3,7 @@ import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { ThemeProvider } from "@/components/theme-provider";
+import { VLibrasWidget } from "@/components/vlibras";
 
 export const metadata: Metadata = {
   title: "Match Jurídico | Conexão Inteligente para Assistência Judiciária Dativa",
@@ -28,6 +29,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <VLibrasWidget />
         </ThemeProvider>
       </body>
     </html>

@@ -17,11 +17,14 @@ import {
   Briefcase,
   FileCheck2,
   Copy,
-  Check
+  Check,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 import { getRequerimentoById } from '@/lib/storage/mock-store';
 import { generateQrCodeDataUrl } from '@/lib/qr/generator';
 import { Requerimento } from '@/types/database';
+import { useTextToSpeech } from '@/hooks/use-speech';
 
 export default function VerificarDocumentoPage() {
   const params = useParams();
@@ -30,6 +33,8 @@ export default function VerificarDocumentoPage() {
   const [requerimento, setRequerimento] = useState<Requerimento | null>(null);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
   const [copied, setCopied] = useState(false);
+
+  const { speak, stop: stopSpeaking, isSpeaking } = useTextToSpeech();
 
   useEffect(() => {
     const req = getRequerimentoById(hash);
@@ -50,6 +55,15 @@ export default function VerificarDocumentoPage() {
     window.print();
   };
 
+  const toggleReadCertidao = () => {
+    if (isSpeaking) {
+      stopSpeaking();
+    } else if (requerimento) {
+      const texto = `Certidão de Requerimento Dativo. Protocolo: ${requerimento.protocolo}. Comarca: ${requerimento.comarca?.nome}. Especialidade: ${requerimento.especialidade?.nome}. Cidadão: ${requerimento.cidadao?.nome_completo || 'Cidadão Autenticado'}. Advogada Dativa: ${requerimento.advogado?.profile?.nome_completo || 'Dra. Camila Vasconcelos de Oliveira'}. ${requerimento.requerimento_estruturado_md || requerimento.descricao_relato}`;
+      speak(texto);
+    }
+  };
+
   if (!requerimento) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-20 text-center">
@@ -60,7 +74,7 @@ export default function VerificarDocumentoPage() {
         <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 max-w-md mx-auto mb-6">
           O código hash informado não corresponde a nenhum protocolo registrado no sistema oficial do Match Jurídico.
         </p>
-        <Link href="/" className="px-5 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-bold shadow-md">
+        <Link href="/" className="px-5 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-bold shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
           Ir para Página Inicial
         </Link>
       </div>
@@ -74,19 +88,36 @@ export default function VerificarDocumentoPage() {
       <div className="flex items-center justify-between mb-6 print:hidden">
         <Link
           href="/"
-          className="inline-flex items-center space-x-1.5 text-xs text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-cyan-300 transition-colors"
+          className="inline-flex items-center space-x-1.5 text-xs text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-cyan-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg p-1"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Voltar à Página Inicial</span>
         </Link>
 
-        <button
-          onClick={handlePrint}
-          className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-navy-800 dark:hover:bg-navy-700 text-slate-800 dark:text-white text-xs font-bold border border-slate-300 dark:border-slate-700 flex items-center space-x-1.5 transition-all shadow-sm"
-        >
-          <Printer className="w-4 h-4 text-blue-600 dark:text-cyan-400" />
-          <span>Imprimir / Salvar PDF</span>
-        </button>
+        <div className="flex items-center space-x-3">
+          <button
+            type="button"
+            onClick={toggleReadCertidao}
+            aria-label={isSpeaking ? 'Parar leitura da certidão' : 'Ouvir o teor da certidão em voz alta'}
+            className={`px-4 py-2 rounded-xl text-xs font-bold border flex items-center space-x-1.5 transition-all shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+              isSpeaking
+                ? 'bg-blue-600 text-white border-blue-600'
+                : 'bg-white dark:bg-navy-800 text-slate-800 dark:text-slate-200 hover:bg-slate-50 border-slate-300 dark:border-slate-700'
+            }`}
+          >
+            {isSpeaking ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />}
+            <span>{isSpeaking ? 'Parar Áudio' : 'Ouvir Certidão'}</span>
+          </button>
+
+          <button
+            onClick={handlePrint}
+            aria-label="Imprimir certidão oficial ou salvar como PDF"
+            className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-navy-800 dark:hover:bg-navy-700 text-slate-800 dark:text-white text-xs font-bold border border-slate-300 dark:border-slate-700 flex items-center space-x-1.5 transition-all shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+          >
+            <Printer className="w-4 h-4 text-blue-600 dark:text-cyan-400" />
+            <span>Imprimir / Salvar PDF</span>
+          </button>
+        </div>
       </div>
 
       {/* Certidão Oficial (Estilo Documento Jurídico) */}
@@ -112,13 +143,13 @@ export default function VerificarDocumentoPage() {
             </div>
           </div>
 
-          {/* QR Code Imagem */}
+          {/* QR Code Imagem com Acessibilidade */}
           {qrCodeUrl && (
             <div className="p-2 bg-white rounded-2xl shadow-md border border-slate-200 shrink-0 flex flex-col items-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img 
                 src={qrCodeUrl} 
-                alt="QR Code de Verificação" 
+                alt={`Código QR de autenticidade para validação do protocolo ${requerimento.protocolo}`}
                 className="w-24 h-24"
               />
               <span className="text-[8px] font-mono text-slate-800 font-bold mt-1">CONSULTA PÚBLICA</span>

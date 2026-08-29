@@ -37,12 +37,21 @@ export function getStoredRequerimentos(): Requerimento[] {
   if (typeof window === 'undefined') return MOCK_REQUERIMENTOS;
   const stored = localStorage.getItem(STORAGE_KEYS.REQUERIMENTOS);
   if (!stored) {
-    return [];
+    return MOCK_REQUERIMENTOS;
   }
   try {
-    return JSON.parse(stored);
+    const list = JSON.parse(stored);
+    // Garantir que a certidão de exemplo público esteja sempre disponível na lista
+    if (Array.isArray(list)) {
+      const hasExemplo = list.some(r => r.hash_autenticidade === MOCK_REQUERIMENTOS[0]?.hash_autenticidade);
+      if (!hasExemplo && MOCK_REQUERIMENTOS.length > 0) {
+        return [...list, ...MOCK_REQUERIMENTOS];
+      }
+      return list;
+    }
+    return MOCK_REQUERIMENTOS;
   } catch {
-    return [];
+    return MOCK_REQUERIMENTOS;
   }
 }
 
@@ -71,7 +80,9 @@ export function saveRequerimento(req: Requerimento): void {
 
 export function getRequerimentoById(id: string): Requerimento | undefined {
   const list = getStoredRequerimentos();
-  return list.find(r => r.id === id || r.protocolo === id || r.hash_autenticidade === id);
+  const found = list.find(r => r.id === id || r.protocolo === id || r.hash_autenticidade === id);
+  if (found) return found;
+  return MOCK_REQUERIMENTOS.find(r => r.id === id || r.protocolo === id || r.hash_autenticidade === id);
 }
 
 export function getStoredMensagens(requerimentoId: string): Mensagem[] {

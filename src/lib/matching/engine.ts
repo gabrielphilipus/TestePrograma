@@ -48,24 +48,30 @@ export function findMatchingAdvogados(params: {
   const { comarcaOrigem, especialidade } = params;
   const advogados = params.advogadosDisponiveis || MOCK_ADVOGADOS;
 
-  // Raio base inicial (se for deserto jurídico, já começa com raio ampliado)
-  const raioInicial = comarcaOrigem.is_deserto_juridico ? 100 : 40;
-  let raioAtual = raioInicial;
-  let modoExpansao: 'local' | 'raio_expandido' | 'deserto_fallback' = comarcaOrigem.is_deserto_juridico ? 'deserto_fallback' : 'local';
+  // Critério estrito e auditável de Deserto Jurídico (escassez real de advogados ativos: <= 25)
+  // Independente do score_oportunidade, o modo deserto só é acionado com escassez de advogados
+  const isRealDeserto = Boolean(
+    comarcaOrigem.is_deserto_juridico ||
+    (typeof comarcaOrigem.num_advogados_ativos === 'number' && comarcaOrigem.num_advogados_ativos <= 25)
+  );
+
+  let raioAtual = isRealDeserto ? 100 : 40;
+  let modoExpansao: 'local' | 'raio_expandido' | 'deserto_fallback' = isRealDeserto ? 'deserto_fallback' : 'local';
   let matchedAdvogados: MatchingResult[] = [];
 
-  // Etapa 1: Busca no raio inicial
+  // Etapa 1: Busca no raio base (40km para comarcas normais, 100km para deserto)
   matchedAdvogados = avaliarAdvogados(advogados, comarcaOrigem, especialidade, raioAtual);
 
-  // Etapa 2: Se não houver ninguém disponível no raio base, expandir progressivamente
+  // Etapa 2: Se não houver advogado na especialidade no raio imediato, expandir progressivamente
   if (matchedAdvogados.length === 0) {
-    raioAtual = 120;
-    modoExpansao = 'raio_expandido';
+    raioAtual = isRealDeserto ? 160 : 80;
+    modoExpansao = isRealDeserto ? 'deserto_fallback' : 'raio_expandido';
     matchedAdvogados = avaliarAdvogados(advogados, comarcaOrigem, especialidade, raioAtual);
   }
 
   // Etapa 3: Modo Deserto Fallback (expansão em todo o Estado/Macrorregião até 250km)
-  if (matchedAdvogados.length === 0) {
+  // SOMENTE permitido se a comarca for de fato um DESERTO JURÍDICO REAL (<= 25 advogados)
+  if (matchedAdvogados.length === 0 && isRealDeserto) {
     raioAtual = 250;
     modoExpansao = 'deserto_fallback';
     matchedAdvogados = avaliarAdvogados(advogados, comarcaOrigem, especialidade, raioAtual);
@@ -88,6 +94,11 @@ function avaliarAdvogados(
   especialidade: Especialidade | undefined,
   raioMaximoKm: number
 ): MatchingResult[] {
+  const isRealDeserto = Boolean(
+    comarcaOrigem.is_deserto_juridico ||
+    (typeof comarcaOrigem.num_advogados_ativos === 'number' && comarcaOrigem.num_advogados_ativos <= 25)
+  );
+
   const resultados: MatchingResult[] = [];
 
   for (const adv of advogados) {
@@ -95,7 +106,12 @@ function avaliarAdvogados(
     if (adv.casos_em_andamento >= adv.limite_casos_simultaneos) continue;
 
     // Calcular distância da sede do advogado até a comarca do processo
-    const comarcaSede = adv.comarca_sede || COMARCAS_DATA.find(c => c.id === adv.comarca_sede_id);
+    const comarcaSede = adv.comarca_sede || COMARCAS_DATA.find(c => 
+      c.id === adv.comarca_sede_id || 
+      c.nome.toLowerCase() === adv.comarca_sede?.nome?.toLowerCase() ||
+      (adv.comarca_sede_id && c.id.replace(/-/g, '').includes(adv.comarca_sede_id.replace(/^com-/, '').replace(/-/g, '')))
+    );
+    
     let distancia = 0;
 
     if (comarcaSede) {
@@ -108,7 +124,7 @@ function avaliarAdvogados(
     }
 
     // Verificar se está dentro do raio permitido e do limite que o próprio advogado aceita
-    if (distancia > raioMaximoKm || distancia > adv.raio_maximo_km) {
+    if (distancia > raioMaximoKm || (distancia > adv.raio_maximo_km && !isRealDeserto)) {
       continue;
     }
 
@@ -123,9 +139,9 @@ function avaliarAdvogados(
     // - Especialidade (30 pontos): correspondência direta de área
     // - Disponibilidade/Carga (15 pontos): menos casos em andamento = mais pontos
     // - Reputação (10 pontos)
-    const scoreProximidade = Math.max(0, 45 - (distancia / raioMaximoKm) * 45);
+    const scoreProximidade = Math.max(0, 45 - (distancia / Math.max(raioMaximoKm, 1)) * 45);
     const scoreEspecialidade = atendeEspecialidade ? 30 : 5;
-    const scoreCarga = Math.max(0, 15 - (adv.casos_em_andamento / adv.limite_casos_simultaneos) * 15);
+    const scoreCarga = Math.max(0, 15 - (adv.casos_em_andamento / Math.max(adv.limite_casos_simultaneos, 1)) * 15);
     const scoreReputacao = (adv.score_reputacao / 5.0) * 10;
 
     const scoreMatch = Math.min(100, Math.round(scoreProximidade + scoreEspecialidade + scoreCarga + scoreReputacao));
@@ -139,7 +155,7 @@ function avaliarAdvogados(
       distanciaKm: distancia,
       scoreMatch,
       raioUtilizadoKm: raioMaximoKm,
-      isDesertoFallback: comarcaOrigem.is_deserto_juridico || distancia > 80,
+      isDesertoFallback: isRealDeserto && (distancia > 40 || raioMaximoKm > 40),
       motivoMatch: motivo,
     });
   }
