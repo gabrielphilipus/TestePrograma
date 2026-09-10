@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   Sparkles, 
@@ -46,20 +46,25 @@ export default function NovoCasoPage() {
 
   // Acessibilidade: Web Speech TTS e STT
   const { speak, stop: stopSpeaking, isSpeaking } = useTextToSpeech();
-  const { startListening, stopListening, isListening, isSupported: isSttSupported } = useSpeechRecognition((text) => {
-    setDescricaoLivre((prev) => {
-      const base = prev.trim();
-      return base ? `${base} ${text}` : text;
-    });
+  const textBeforeVoiceRef = useRef('');
+
+  const { startListening, stopListening, isListening, isSupported: isSttSupported } = useSpeechRecognition((spokenText) => {
+    const base = textBeforeVoiceRef.current.trim();
+    setDescricaoLivre(base ? `${base} ${spokenText}` : spokenText);
   });
 
   const selectedComarca = COMARCAS_DATA.find(c => c.id === comarcaId) || COMARCAS_DATA[0];
 
   // Alternar Ditado por Voz
   const toggleVoiceInput = () => {
+    if (!isSttSupported) {
+      alert('O reconhecimento de voz pelo microfone funciona de forma nativa no Google Chrome, Microsoft Edge ou Safari. Verifique se o microfone está liberado nas permissões do navegador.');
+      return;
+    }
     if (isListening) {
       stopListening();
     } else {
+      textBeforeVoiceRef.current = descricaoLivre;
       startListening();
     }
   };

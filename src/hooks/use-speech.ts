@@ -68,6 +68,11 @@ export function useSpeechRecognition(onTranscript?: (text: string) => void) {
   const [isSupported, setIsSupported] = useState(false);
   const [transcript, setTranscript] = useState('');
   const recognitionRef = useRef<any>(null);
+  const onTranscriptRef = useRef(onTranscript);
+
+  useEffect(() => {
+    onTranscriptRef.current = onTranscript;
+  }, [onTranscript]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -86,14 +91,16 @@ export function useSpeechRecognition(onTranscript?: (text: string) => void) {
             currentTranscript += event.results[i][0].transcript;
           }
           setTranscript(currentTranscript);
-          if (onTranscript) {
-            onTranscript(currentTranscript);
+          if (onTranscriptRef.current) {
+            onTranscriptRef.current(currentTranscript);
           }
         };
 
         recognition.onerror = (event: any) => {
           console.warn('SpeechRecognition error:', event.error);
-          setIsListening(false);
+          if (event.error !== 'no-speech') {
+            setIsListening(false);
+          }
         };
 
         recognition.onend = () => {
@@ -103,7 +110,7 @@ export function useSpeechRecognition(onTranscript?: (text: string) => void) {
         recognitionRef.current = recognition;
       }
     }
-  }, [onTranscript]);
+  }, []);
 
   const startListening = useCallback(() => {
     if (recognitionRef.current) {

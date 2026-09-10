@@ -108,10 +108,7 @@ export default function AdvogadoDashboardPage() {
             <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Casos</span>
             <p className="text-base font-extrabold text-slate-900 dark:text-white">{meusCasosAceitos.length}</p>
           </div>
-          <div className="p-3 rounded-xl bg-slate-100 dark:bg-navy-850 border border-slate-200 dark:border-slate-800 text-center min-w-[70px] shadow-sm">
-            <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Reputação</span>
-            <p className="text-base font-extrabold text-amber-500 dark:text-amber-400">4.95 / 5.0</p>
-          </div>
+
           <div className="p-3 rounded-xl bg-slate-100 dark:bg-navy-850 border border-slate-200 dark:border-slate-800 text-center min-w-[80px] shadow-sm">
             <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Status</span>
             <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">Disponível</p>
